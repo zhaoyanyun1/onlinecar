@@ -1,0 +1,109 @@
+
+-- 用户表
+CREATE TABLE `online_car`.`system_user` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `account` VARCHAR(45) NULL,
+  `password` VARCHAR(45) NULL,
+  `type` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `create_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+
+  INSERT INTO `online_car`.`system_user` (`id`, `name`, `account`, `password`, `type`, `state`) VALUES ('1', '管理员', 'admin', 'admin', '1', '1');
+
+
+-- 司机信息
+
+CREATE TABLE `online_car`.`drivers` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `sex` VARCHAR(45) NULL,
+  `age` INT NULL,
+  `idcard` VARCHAR(45) NULL,
+  `driving_experience` INT NULL,
+  `car_num` VARCHAR(45) NULL,
+  `license_up` VARCHAR(1000) NULL,
+  `license_down` VARCHAR(1000) NULL,
+  `idcard_photo` VARCHAR(1000) NULL,
+  `vehicle_licence` VARCHAR(1000) NULL,
+  `state` VARCHAR(45) NULL,
+  `create_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+  ADD COLUMN `phone` VARCHAR(45) NULL AFTER `vehicle_licence`;
+  ADD COLUMN `integral` VARCHAR(45) NULL AFTER `phone`;
+  ADD COLUMN `balance` VARCHAR(45) NULL AFTER `integral`;
+
+
+  -- 积分明细表
+
+  CREATE TABLE `online_car`.`Integral_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` VARCHAR(45) NULL,
+  `integral_num` INT NULL,
+  `detailed` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `create_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+
+--- 乘客
+
+CREATE TABLE `online_car`.`passenger` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `phone` VARCHAR(45) NULL,
+  `sex` VARCHAR(45) NULL,
+  `wechat` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `integral` VARCHAR(45) NULL,
+  `crate_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+-- 余额明细
+CREATE TABLE `online_car`.`balance_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `drivers_id` VARCHAR(45) NULL,
+  `money` VARCHAR(45) NULL,
+  `type` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `crate_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+-- 优惠券
+
+CREATE TABLE `online_car`.`coupon` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(45) NULL,
+  `money` VARCHAR(45) NULL,
+  `redeem_points
+
+Redeem points
+
+redeem_points` VARCHAR(45) NULL,
+  `term_validity
+
+term of validity
+
+term_validity` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `create_time` DATETIME NULL,
+  `update_time` DATETIME NULL,
+  PRIMARY KEY (`id`));
+
+
+  -- 优惠券明细
+
+
+  CREATE TABLE `online_car`.`coupon_detail` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` VARCHAR(45) NULL,
+  `user_type` VARCHAR(45) NULL,
+  `coupon_id` VARCHAR(45) NULL,
+  `state` VARCHAR(45) NULL,
+  `create_time` VARCHAR(45) NULL,
+  `update_time` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
+
