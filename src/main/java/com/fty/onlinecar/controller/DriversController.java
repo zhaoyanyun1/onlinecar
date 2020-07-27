@@ -5,10 +5,8 @@ import com.fty.onlinecar.entity.Drivers;
 import com.fty.onlinecar.service.DriversService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
@@ -21,7 +19,7 @@ import io.swagger.annotations.*;
 * Created by wanghuiwen on 2020/07/27.
 */
 @Api(value = "Drivers", tags = {"Drivers"})
-@RestController
+@Controller
 @RequestMapping("/drivers")
 public class DriversController{
     @Resource
@@ -74,5 +72,11 @@ public class DriversController{
                        @RequestParam(defaultValue = "0") Integer page,
                        @RequestParam(defaultValue = "10") Integer size) {
         return driversService.list(search, order, page, size);
+    }
+
+
+    @GetMapping(value = "/driversManage")
+    public String toManage(){
+        return "drivers/driversManage";
     }
 }
