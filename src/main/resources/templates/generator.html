@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style type="text/css">
+    .code-generator{
+        width: 800px;
+    }
+    .code-generator-form{
+        padding: 20px;
+    }
+    .code-generator-item{
+        display: flex;
+        padding: 5px;
+    }
+
+    .code-generator-label{
+        width: 150px;
+    }
+    .code-generator-input{
+
+    }
+    .code-generator-submit{
+
+    }
+    .code-generator-submit-item{
+        width: 100%;
+    }
+</style>
+<body>
+<div class="code-generator">
+    <form id="code" method="post" class="code-generator-form">
+        <div class="code-generator-item">
+            <div class="code-generator-label">项目模块</div>
+            <input type="text" value="" name="moduleName" class="code-generator-input"/>
+        </div>
+        <div class="code-generator-item">
+            <div class="code-generator-label">业务名称</div>
+            <input type="text" value="" name="businessName"/>
+        </div>
+        <div class="code-generator-item">
+            <div class="code-generator-label">表名</div>
+            <input type="text" value="" name="tableName"/>
+        </div>
+        <div class="code-generator-item">
+            <div class="code-generator-label">生成Model和xml</div>
+            <input type="checkbox" name="modelOnly"/>
+        </div>
+        <div class="code-generator-item">
+            <div class="code-generator-label">生成Model和Dao</div>
+            <input type="checkbox" name="modelAndMapper" value=""/>
+        </div>
+        <div class="code-generator-item">
+            <div class="code-generator-label">生成Service</div>
+            <input type="checkbox" name="service"/>
+        </div>
+        <div class="code-generator-item">
+            <div class="code-generator-label">生成Controller</div>
+            <input type="checkbox" name="controller"/>
+        </div>
+        <div class="code-generator-submit-item">
+            <button type="button" class="code-generator-submit"  onclick="generator()">生成</button>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    function generator() {
+        fetch('/onlinecar/generator/code/submit', {
+            method: 'post',
+            body: new FormData(document.getElementById('code'))
+        }).then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => {
+                alert(response.message)
+            });
+    }
+</script>
+</body>
+</html>

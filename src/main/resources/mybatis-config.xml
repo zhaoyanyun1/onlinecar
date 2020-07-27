@@ -8,7 +8,7 @@
     <!--<package name="com.example.domain"/>-->
     <!--</typeAliases>-->
     <mappers>
-        <mapper resource="mapper/SystemUserDao.xml"/>
+        <mapper resource="dao/mapper/SystemUserDao.xml"/>
     </mappers>
     <settings>
         <!--使用jdbc的getGeneeratedKeys获取数据库自增主键值-->
