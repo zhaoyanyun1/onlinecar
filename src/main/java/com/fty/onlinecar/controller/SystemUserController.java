@@ -50,6 +50,7 @@ public class SystemUserController {
             request.setAttribute("error","密码错误！");
             return "systemUserToLogin";
         }
+        request.setAttribute("name",user.getName());
         return "main";
     }
 }

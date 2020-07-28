@@ -1,27 +1,54 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en"  xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <title>Layui</title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" th:href="@{/static/layui/css/layui.css}"  media="all">
-    <!-- 注意：如果你直接复制所有代码到本地，上述css路径需要改成你本地的 -->
+    <meta charset="UTF-8"/>
+    <title>管理系统</title>
+    <div th:include="fragment/head :: head"></div>
 </head>
 <body>
-<!--<blockquote class="layui-elem-quote">-->
-    <!--你也可以单独打开后台布局的例子：-->
-    <!--<a class="layui-btn layui-btn-normal" href="layuiAdmin.html" target="_blank">单独打开</a>-->
-<!--</blockquote>-->
+<div class="">
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <ul class="layui-nav layui-nav-right">
+                <li class="layui-nav-item">
+                    <a th:text="${name}"><img src="http://t.cn/RCzsdCq" class="layui-nav-img"/></a>
+                    <dl class="layui-nav-child">
+                        <dd><a id="chang"><i class="layui-icon">&#xe6b2;</i><cite> 修改密码</cite></a></dd>
+                        <!--<dd><a href="javascript:;"><i class="layui-icon">&#xe6b2;</i> 安全管理</a></dd>-->
+                        <dd><a href="loginOut"><i class="layui-icon">&#xe6b2;</i> 退出</a></dd>
+                    </dl>
+                </li>
 
-<!--<iframe src="layuiAdmin.html?from=demo" frameborder="0" id="demoAdmin" style="width: 100%; height: 300px;"></iframe>-->
+            </ul>
+        </div>
+        <div th:include="fragment/menu :: menu"></div>
 
+        <div class="layui-body " style="bottom: 0">
+            <div class="layui-tab layui-tab-brief "  lay-filter="tab" lay-allowclose="true">
+                <ul class="layui-tab-title ">
+                    <li lay-id="0" class="layui-this">首页</li>
+                </ul>
 
-<script th:href="@{/static/layui/css/layui.css}" charset="utf-8"></script>
-<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
-<script>
+                <div class="layui-tab-content">
+                    <div class="layui-tab-item layui-show">
+                        <div th:text="${name}"> }"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/static/layui/layui.js}"></script>
+<!-- layui规范化用法 -->
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    layui.config({
+        base: 'static/layui/js/'
+    }).use('home');
+
+    /*]]>*/
+
 </script>
-
 </body>
+
 </html>

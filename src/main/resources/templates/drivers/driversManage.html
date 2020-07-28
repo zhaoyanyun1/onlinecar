@@ -2,23 +2,81 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>公司信息管理</title>
+    <title>title</title>
     <div th:include="fragment/head :: head"></div>
 </head>
 <body>
-<!--<a class="layui-btn layui-btn-sm" id="update">修改公司信息</a>-->
+<a class="layui-btn layui-btn-sm" id="add">添加司机</a>
 
-<!--<table id="company" lay-filter="company"></table>-->
-asdfasdfasdfasdf
-<div th:include="fragment/menu :: menu"></div>
-<!--<script type="text/html" id="update">-->
-    <!--<a class="layui-btn  layui-btn-xs" lay-event="update">修改</a>-->
-<!--</script>-->
+<table id="drivers" lay-filter="supplier"></table>
+<script type="text/html" id="del">
+    <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
+</script>
 <div id="form" style="display: none">
 
 </div>
 
-<script th:src="@{/static/layui/layui.all.js}"></script>
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:inline="javascript">
 
+    /*<![CDATA[*/
+    layui.use(['table', 'form'], function () {
+        var table = layui.table
+            , $ = layui.$
+            , form = layui.form;
+        //员工
+        var userinfos = table.render({
+            elem: '#drivers'
+            , id: 'drivers'
+            , url: 'list' //数据接口
+            , method: 'post'
+            , page: true //开启分页
+            , size: 'sm'
+            , cols: [[ //表头
+                {field: 'name', title: '姓名', width: '20%', sort: true}
+                , {field: 'sex', title: '性别', width: '20%', sort: true}
+                , {field: 'age', title: '年龄', width: '20%', sort: true}
+                , {field: 'del', title: '删除', width: '30%', sort: true, toolbar: '#del'}
+            ]]
+        });
+        $("#add").click(function () {
+            layer.open({
+                type: 2
+                , title: '添加供货商'
+                , area: ['500px', '300px']
+                , content: ["supplier/add", "no"]
+                , cancel: function () {
+                    userinfos.reload();
+                }
+
+            })
+        });
+        table.on('tool(supplier)', function (obj) {
+            var layEvent = obj.event;
+            var data = obj.data;
+            console.log(data);
+            if (layEvent === 'del') {
+                layer.confirm("确定删除？", function (index) {
+                    obj.del();
+                    layer.close(index);
+                    $.ajax({
+                        url: 'supplier/del',
+                        type: "post",
+                        dataType: "json",
+                        data: {supplierName: data.supplierName},
+                        success: function (data) {
+                            layer.message(data.message);
+                            window.location.reload();
+                        }
+                    });
+                })
+            }
+        })
+
+    });
+
+
+    /*]]>*/
+</script>
 </body>
 </html>
