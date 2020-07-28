@@ -2,6 +2,7 @@ package com.fty.onlinecar.service.impl;
 
 import com.fty.onlinecar.dao.DriversMapper;
 import com.fty.onlinecar.entity.Drivers;
+import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.DriversService;
 import com.fty.onlinecar.base.service.AbstractService;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class DriversServiceImpl extends AbstractService<Drivers> implements Driv
     private DriversMapper driversMapper;
 
     @Override
-    public Result list(String search, String order, Integer page, Integer size){
+    public List<Map<String, Object>> list(String search, String order, Integer page, Integer size){
         Map<String, Object> params = JSONUtils.json2map(search);
         Map<String, Object> orderParams = JSONUtils.json2map(order);
         for (String key : orderParams.keySet()) {
@@ -36,7 +37,7 @@ public class DriversServiceImpl extends AbstractService<Drivers> implements Driv
             }
         PageHelper.startPage(page, size);
         List<Map<String, Object>> res = driversMapper.baseList(params, orderParams);
-        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(res);
-        return ResultGenerator.genSuccessResult(pageInfo);
+//        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(res);
+        return res;
     }
 }
