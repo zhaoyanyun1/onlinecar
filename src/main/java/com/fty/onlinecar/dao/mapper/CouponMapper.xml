@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fty.onlinecar.entity.CouponMapper">
+  <resultMap id="BaseResultMap" type="com.fty.onlinecar.entity.Coupon">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="money" jdbcType="VARCHAR" property="money" />
+    <result column="redeem_points" jdbcType="VARCHAR" property="redeemPoints" />
+    <result column="term_validity" jdbcType="VARCHAR" property="termValidity" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+</mapper>

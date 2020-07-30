@@ -74,26 +74,17 @@ CREATE TABLE `online_car`.`balance_detail` (
   PRIMARY KEY (`id`));
 -- 优惠券
 
-CREATE TABLE `online_car`.`coupon` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
-  `money` VARCHAR(45) NULL,
-  `redeem_points
-
-Redeem points
-
-redeem_points` VARCHAR(45) NULL,
-  `term_validity
-
-term of validity
-
-term_validity` VARCHAR(45) NULL,
-  `state` VARCHAR(45) NULL,
-  `create_time` DATETIME NULL,
-  `update_time` DATETIME NULL,
-  PRIMARY KEY (`id`));
-
-
+CREATE TABLE `NewTable` (
+`id`  int NOT NULL AUTO_INCREMENT ,
+`money`  varchar(45) NULL ,
+`redeem_points`  varchar(45) NULL ,
+`term_validity`  varchar(45) NULL ,
+`name`  varchar(45) NULL ,
+`state`  varchar(2) NULL ,
+`create_time`  datetime NULL DEFAULT now() ,
+`update_time`  datetime NULL DEFAULT now()
+)
+;
   -- 优惠券明细
 
 
