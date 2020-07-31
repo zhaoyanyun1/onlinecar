@@ -30,8 +30,9 @@ public class CouponController{
 
     @ApiOperation(value = "Coupon添加", tags = {"Coupon"}, notes = "Coupon添加")
     @PostMapping(value="/add",name="Coupon添加")
-    public Result add(@ApiParam Coupon coupon) {
-        couponService.save(coupon);
+    @ResponseBody
+    public Result add(@RequestBody Coupon data) {
+        couponService.save(data);
         return ResultGenerator.genSuccessResult();
     }
 
@@ -40,6 +41,7 @@ public class CouponController{
         @ApiImplicitParam(name = "id",required=true, value = "Couponid", dataType = "Long", paramType = "query")
     })
     @PostMapping(value="/delete",name="Coupon删除")
+    @ResponseBody
     public Result delete(@RequestParam Long id) {
         couponService.deleteById(id);
         return ResultGenerator.genSuccessResult();
@@ -57,6 +59,7 @@ public class CouponController{
         @ApiImplicitParam(name = "id",required=true, value = "Couponid", dataType = "Long", paramType = "query")
     })
     @PostMapping(value="/detail",name="Coupon详细信息")
+    @ResponseBody
     public Result detail(@RequestParam Integer id) {
         Coupon coupon = couponService.findById(id);
         return ResultGenerator.genSuccessResult(coupon);
@@ -86,5 +89,9 @@ public class CouponController{
     @GetMapping(value = "/couponManage")
     public String toManage(){
         return "coupon/couponManage";
+    }
+    @GetMapping(value = "/toAdd")
+    public String toAdd(){
+        return "coupon/add";
     }
 }

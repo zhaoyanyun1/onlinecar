@@ -21,6 +21,7 @@
 
     /*<![CDATA[*/
     layui.use(['table', 'form'], function () {
+        var layer = layui.layer;
         var table = layui.table
             , $ = layui.$
             , form = layui.form;
@@ -51,7 +52,7 @@
 
             })
         });
-        table.on('tool(drivers)', function (obj) {
+        table.on('tool(coupon)', function (obj) {
             var layEvent = obj.event;
             var data = obj.data;
             console.log(data);
@@ -65,7 +66,6 @@
                         dataType: "json",
                         data: {id: data.id},
                         success: function (data) {
-                            layer.message(data.message);
                             window.location.reload();
                         }
                     });

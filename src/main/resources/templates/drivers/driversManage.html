@@ -9,7 +9,8 @@
 <a class="layui-btn layui-btn-sm" id="add">添加司机</a>
 
 <table id="drivers" lay-filter="drivers"></table>
-<script type="text/html" id="del">
+<script type="text/html" id="operation">
+    <a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>
     <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
 </script>
 <div id="form" style="display: none">
@@ -37,7 +38,7 @@
                 , {field: 'sex', title: '性别', width: '20%', sort: true}
                 , {field: 'carNum', title: '车牌号', width: '20%', sort: true}
                 , {field: 'idcard', title: '身份证号', width: '20%', sort: true}
-                , {field: 'del', title: '删除', width: '20%', sort: true, toolbar: '#del'}
+                , {field: 'operation', title: '操作', width: '20%', sort: true, toolbar: '#operation'}
             ]]
         });
         $("#add").click(function () {
@@ -72,7 +73,30 @@
                     });
                 })
             }
+            if (layEvent === 'detail') {
+                setDetail(data);
+                layer.open({
+                    type: 1
+                    , title: '司机信息详情'
+                    , area: ['500px', '300px']
+                    , content: $('#detail')
+                    , cancel: function () {
+                        userinfos.reload();
+                    }
+
+                })
+            }
         })
+
+
+        function setDetail(driver){
+            console.log(driver)
+            $("span[name='name']").text(driver.name ? driver.name : '无数据');
+            $("span[name='sex']").text(driver.sex ? driver.sex : '无数据');
+            $("span[name='age']").text(driver.age ? driver.age : '无数据');
+            $("span[name='idcard']").text(driver.idcard ? driver.idcard : '无数据');
+            $("span[name='carNum']").text(driver.carNum ? driver.carNum : '无数据');
+        }
 
     });
 
@@ -80,4 +104,13 @@
     /*]]>*/
 </script>
 </body>
+
+<div id="detail" style="display: none">
+    司机名称:  <span name="name"></span><br/>
+    司机性别:  <span name="sex"></span><br/>
+    司机年龄:  <span name="age"></span><br/>
+    司机车牌号:  <span name="carNum"></span><br/>
+    司机驾龄:  <span name="name"></span><br/>
+    司机身份证号:  <span name="idcard"></span><br/>
+</div>
 </html>
