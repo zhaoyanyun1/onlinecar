@@ -1,20 +1,21 @@
 package com.fty.onlinecar.controller;
-import com.fty.onlinecar.response.Result;
-import com.fty.onlinecar.response.ResultGenerator;
+
+import com.fty.onlinecar.entity.Account;
 import com.fty.onlinecar.entity.Drivers;
+import com.fty.onlinecar.response.Result;
+import com.fty.onlinecar.response.ResultEnum;
+import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.response.Table;
+import com.fty.onlinecar.service.AccountService;
 import com.fty.onlinecar.service.DriversService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Condition;
-import tk.mybatis.mapper.entity.Example;
+
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-
-import io.swagger.annotations.*;
 
 
 
@@ -27,12 +28,27 @@ import io.swagger.annotations.*;
 public class DriversController{
     @Resource
     private DriversService driversService;
+    @Resource
+    private AccountService accountService;
 
     @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
     @PostMapping(value="/add",name="Drivers添加")
     @ResponseBody
     public Result add(@RequestBody Drivers data) {
+        if(StringUtils.isEmpty(data.getPhone())){
+            return ResultGenerator.genResult(ResultEnum.PHONE_NULL);
+        }
+        Account account = accountService.findBy("phone",data.getPhone());
+        if(account!=null){
+            return ResultGenerator.genResult(ResultEnum.PHONE_HAVE);
+        }
         driversService.save(data);
+        account = new Account();
+        account.setPhone(data.getPhone());
+        account.setPassword("123456");
+        account.setState("1");
+        account.setType("1");
+        accountService.save(account);
         return ResultGenerator.genSuccessResult();
     }
 

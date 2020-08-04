@@ -35,6 +35,8 @@ public class Drivers implements Serializable {
     @Column(name = "vehicle_licence")
     private String vehicleLicence;
 
+    private String phone;
+
     private String state;
 
     @Column(name = "create_time")
@@ -197,6 +199,20 @@ public class Drivers implements Serializable {
      */
     public void setVehicleLicence(String vehicleLicence) {
         this.vehicleLicence = vehicleLicence;
+    }
+
+    /**
+     * @return phone
+     */
+    public String getPhone() {
+        return phone;
+    }
+
+    /**
+     * @param phone
+     */
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     /**

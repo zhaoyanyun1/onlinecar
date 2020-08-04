@@ -31,6 +31,9 @@ public enum ResultEnum implements IResultEnum {
     MODULE_EXISTS("模块不存在",400117),
     DUPLICATE_KEY("违反唯一约束",400118),
     PASSWORD_ERROR("密码错误",400119),
+    PHONE_NULL("手机号不能为空",500),
+    PHONE_HAVE("手机号已经存在",500),
+    PHONE_NO("手机号没有注册",500),
     ;
 
     private final String message;
