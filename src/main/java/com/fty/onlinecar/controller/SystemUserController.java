@@ -24,7 +24,7 @@ public class SystemUserController {
     public ModelAndView index(){
         // 顾名思义 实体和数据 同时返回页面模板和数据
         ModelAndView mav = new ModelAndView("index");
-        List<SystemUser> list = systemUserService.findAll();
+        List<SystemUser> list = systemUserService.all();
         mav.addObject("list",list);
         return mav;
     }

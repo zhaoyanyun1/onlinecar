@@ -2,14 +2,18 @@ package com.fty.onlinecar.controller;
 import com.fty.onlinecar.response.Result;
 import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.entity.Users;
+import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.UsersService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
+
 import io.swagger.annotations.*;
 
 
@@ -18,16 +22,27 @@ import io.swagger.annotations.*;
 * Created by wanghuiwen on 2020/08/06.
 */
 @Api(value = "Users", tags = {"Users"})
-@RestController
+@Controller
 @RequestMapping("/users")
 public class UsersController{
     @Resource
     private UsersService usersService;
 
-    @ApiOperation(value = "Users添加", tags = {"Users"}, notes = "Users添加")
-    @PostMapping(value="/add",name="Users添加")
+    @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
+    @PostMapping(value="/addDriver",name="Drivers添加")
     @ResponseBody
-    public Result add(@RequestBody Users users) {
+    public Result addDriver(@RequestBody Users users) {
+        users.setType(1);
+        users.setPassword("123456");
+        usersService.save(users);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
+    @PostMapping(value="/addPassenger",name="Drivers添加")
+    @ResponseBody
+    public Result addPassenger(@RequestBody Users users) {
+        users.setType(2);
         usersService.save(users);
         return ResultGenerator.genSuccessResult();
     }
@@ -37,6 +52,7 @@ public class UsersController{
         @ApiImplicitParam(name = "id",required=true, value = "Usersid", dataType = "Long", paramType = "query")
     })
     @PostMapping(value="/delete",name="Users删除")
+    @ResponseBody
     public Result delete(@RequestParam Long id) {
         usersService.deleteById(id);
         return ResultGenerator.genSuccessResult();
@@ -67,10 +83,26 @@ public class UsersController{
         @ApiImplicitParam(name = "size", value = "每页显示的条数", dataType = "String", paramType = "query", defaultValue = "10")
     })
     @PostMapping(value = "/list", name = "Users列表信息")
-    public Result list(@RequestParam(defaultValue = "{}") String search,
-                       @RequestParam(defaultValue = "{}") String order,
-                       @RequestParam(defaultValue = "0") Integer page,
-                       @RequestParam(defaultValue = "10") Integer size) {
-        return usersService.list(search, order, page, size);
+    @ResponseBody
+    public Table list(@RequestParam("search") String search,
+                      @RequestParam(defaultValue = "{}") String order,
+                      @RequestParam(defaultValue = "0") Integer page,
+                      @RequestParam(defaultValue = "10") Integer size) {
+
+        List<Map<String, Object>> list = usersService.list(search, order, page, size);
+        Table table = new Table();
+        table.setData(list);
+        table.setCount(list.size());
+        return table;
+    }
+
+    @GetMapping(value = "/usersManage")
+    public String toManage(){
+        return "users/usersManage";
+    }
+
+    @GetMapping(value = "/toAdd")
+    public String toAdd(){
+        return "users/add";
     }
 }

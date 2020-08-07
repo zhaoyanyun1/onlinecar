@@ -1,21 +1,17 @@
 package com.fty.onlinecar.service.impl;
 
+import com.fty.onlinecar.base.service.AbstractService;
 import com.fty.onlinecar.dao.UsersMapper;
 import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.service.UsersService;
-import com.fty.onlinecar.base.service.AbstractService;
+import com.fty.onlinecar.utils.JSONUtils;
+import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import com.fty.onlinecar.utils.JSONUtils;
-import com.fty.onlinecar.response.Result;
-import com.fty.onlinecar.response.ResultGenerator;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 
 /**
  * Created by wanghuiwen on 2020/08/06.
@@ -27,7 +23,7 @@ public class UsersServiceImpl extends AbstractService<Users> implements UsersSer
     private UsersMapper usersMapper;
 
     @Override
-    public Result list(String search, String order, Integer page, Integer size){
+    public List<Map<String, Object>> list(String search, String order, Integer page, Integer size){
         Map<String, Object> params = JSONUtils.json2map(search);
         Map<String, Object> orderParams = JSONUtils.json2map(order);
         for (String key : orderParams.keySet()) {
@@ -35,8 +31,7 @@ public class UsersServiceImpl extends AbstractService<Users> implements UsersSer
                 if (orderParams.get(key) != null && orderParams.get(key).equals("descending")) orderParams.put(key, "desc");
             }
         PageHelper.startPage(page, size);
-        List<Map<String, Object>> res = usersMapper.baseList(params, orderParams);
-        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(res);
-        return ResultGenerator.genSuccessResult(pageInfo);
+        List<Map<String, Object>> res = usersMapper.list(params, orderParams);
+        return res;
     }
 }
