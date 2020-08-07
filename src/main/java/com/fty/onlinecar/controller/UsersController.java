@@ -84,7 +84,7 @@ public class UsersController{
     })
     @PostMapping(value = "/list", name = "Users列表信息")
     @ResponseBody
-    public Table list(@RequestParam("search") String search,
+    public Table list(@RequestParam(defaultValue = "{}") String search,
                       @RequestParam(defaultValue = "{}") String order,
                       @RequestParam(defaultValue = "0") Integer page,
                       @RequestParam(defaultValue = "10") Integer size) {
