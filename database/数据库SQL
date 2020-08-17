@@ -12,7 +12,8 @@ CREATE TABLE `online_car`.`system_user` (
   PRIMARY KEY (`id`));
 
   INSERT INTO `online_car`.`system_user` (`id`, `name`, `account`, `password`, `type`, `state`) VALUES ('1', '管理员', 'admin', 'admin', '1', '1');
-
+CHANGE COLUMN `integral` `integral` VARCHAR(45) NULL DEFAULT 0 ,
+CHANGE COLUMN `balance` `balance` VARCHAR(45) NULL DEFAULT 0 ;
 
 -- 司机信息
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fty.onlinecar.dao.TripDetailMapper">
+    <resultMap id="BaseResultMap" type="com.fty.onlinecar.entity.TripDetail">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="driver_id" jdbcType="INTEGER" property="driverId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="p_id" jdbcType="INTEGER" property="pId"/>
+        <result column="all_seat_num" jdbcType="INTEGER" property="allSeatNum"/>
+        <result column="surplus_seat_num" jdbcType="INTEGER" property="surplusSeatNum"/>
+        <result column="departure_time" jdbcType="VARCHAR" property="departureTime"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="tripDetailService" resultType="com.fty.onlinecar.base.ResultMap">
+    select td.*,u.name,u.phone from trip_detail td
+    left join users u
+    on u.id = td.driver_id
+    where 1=1
+    and td.driver_id != ''
+  </select>
+</mapper>
