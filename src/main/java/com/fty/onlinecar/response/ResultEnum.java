@@ -34,6 +34,7 @@ public enum ResultEnum implements IResultEnum {
     PHONE_NULL("手机号不能为空",500),
     PHONE_HAVE("手机号已经存在",500),
     PHONE_NO("手机号没有注册",500),
+    NO_TRIP("当前没有行程",222),
     ;
 
     private final String message;

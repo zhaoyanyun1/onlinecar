@@ -46,8 +46,8 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     }
 
     @Override
-    public List<Map<String, Object>> tripDetailService() {
-        List<Map<String, Object>> res = tripDetailMapper.tripDetailService();
+    public List<Map<String, Object>> driverTriplist() {
+        List<Map<String, Object>> res = tripDetailMapper.driverTriplist();
         return res;
     }
 
@@ -65,5 +65,20 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
 //        Users passenger = usersService.findById(tripDetail.getUserId());
 //        String balance =String.valueOf(Integer.parseInt(driver.getBalance())-1);
 //        driver.setBalance(balance);
+    }
+
+    @Override
+    public TripDetail findCurTripByDriver(Map<String,Object> params) {
+        return tripDetailMapper.findCurTripByDriver(params);
+    }
+
+    @Override
+    public TripDetail findCurTripByPassenger(Map<String,Object> params) {
+        return tripDetailMapper.findCurTripByPassenger(params);
+    }
+
+    @Override
+    public List<Map<String, Object>> findPeersPassenger(Integer tripId) {
+        return tripDetailMapper.findPeersPassenger(tripId);
     }
 }

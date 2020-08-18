@@ -33,6 +33,9 @@ public class ResultGenerator {
     public static Result genFailResult() {
         return new Result(ResultEnum.FAIL);
     }
+    public static Result genNoTripResult() {
+        return new Result(ResultEnum.NO_TRIP);
+    }
 
     public static Result genFailResult(Object data) {
         return new Result(ResultEnum.FAIL,data);

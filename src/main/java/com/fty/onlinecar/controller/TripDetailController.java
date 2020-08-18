@@ -1,10 +1,13 @@
 package com.fty.onlinecar.controller;
 import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.response.Result;
+import com.fty.onlinecar.response.ResultEnum;
 import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.entity.TripDetail;
+import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.TripDetailService;
 import com.fty.onlinecar.service.UsersService;
+import com.fty.onlinecar.utils.JSONUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.sun.tools.javac.comp.Todo;
@@ -13,6 +16,7 @@ import sun.jvm.hotspot.asm.Register;
 import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -126,7 +130,55 @@ public class TripDetailController{
 
     @PostMapping(value = "/driverTriplist", name = "TripDetail列表信息")
     public Result driverTriplist(@RequestBody String search) {
-        List<Map<String,Object>> list = tripDetailService.tripDetailService();
+        List<Map<String,Object>> list = tripDetailService.driverTriplist();
         return ResultGenerator.genSuccessResult(list);
+    }
+
+    @PostMapping(value="/findCurTripByDriver",name="查询司机当前行程")
+    @ResponseBody
+    public Result findCurTripByDriver(@RequestBody String search) {
+        Map<String, Object> params = JSONUtils.json2map(search);
+        TripDetail tripDetail = tripDetailService.findCurTripByDriver(params);
+        if(tripDetail ==null){
+            return ResultGenerator.genNoTripResult();
+        }
+        return ResultGenerator.genSuccessResult(tripDetail);
+    }
+
+    @PostMapping(value="/findCurTripByPassenger",name="查询司机当前行程")
+    @ResponseBody
+    public Result findCurTripByPassenger(@RequestBody String search) {
+        Map<String, Object> params = JSONUtils.json2map(search);
+        TripDetail tripDetail = tripDetailService.findCurTripByPassenger(params);
+        if(tripDetail ==null){
+            return ResultGenerator.genNoTripResult();
+        }
+        return ResultGenerator.genSuccessResult(tripDetail);
+    }
+
+
+    /**
+     * 司机查看同行乘客
+     * @return
+     */
+    @PostMapping(value = "/findPeersPassenger", name = "Users列表信息")
+    @ResponseBody
+    public List<Map<String, Object>> findPeersPassenger(@RequestBody Integer tripId) {
+
+        List<Map<String, Object>> list = tripDetailService.findPeersPassenger(tripId);
+        return list;
+    }
+
+    /**
+     * 司机查看同行乘客
+     * @return
+     */
+    @PostMapping(value = "/cancelTrip", name = "Users列表信息")
+    @ResponseBody
+    public Result cancelTrip(@RequestBody Integer tripId) {
+        TripDetail tripDetail = tripDetailService.findById(tripId);
+        tripDetail.setState("0");
+//        tripDetailService.save(tripDetail);
+        return ResultGenerator.genSuccessResult();
     }
 }

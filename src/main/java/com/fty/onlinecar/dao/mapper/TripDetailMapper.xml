@@ -17,11 +17,40 @@
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
     </resultMap>
 
-    <select id="tripDetailService" resultType="com.fty.onlinecar.base.ResultMap">
+    <select id="driverTriplist" resultType="com.fty.onlinecar.base.ResultMap">
     select td.*,u.name,u.phone from trip_detail td
     left join users u
     on u.id = td.driver_id
     where 1=1
+    and td.state = 1
     and td.driver_id != ''
+    and to_days(td.create_time) = to_days(now());
   </select>
+
+    <select id="findCurTripByDriver" resultMap="BaseResultMap">
+
+        select * from trip_detail
+          where 1=1
+          and state = 1
+          and driver_id = #{params.driverId}
+          and to_days(create_time) = to_days(now());
+    </select>
+
+    <select id="findPeersPassenger" resultType="com.fty.onlinecar.base.ResultMap">
+
+        select td.*,u.phone from trip_detail td
+        left join users u
+        on u.id = td.user_id
+        where 1=1
+        and td.state = 1
+        and  td.p_id = #{tripId}
+    </select>
+
+    <select id="findCurTripByPassenger" resultMap="BaseResultMap">
+         select * from trip_detail
+          where 1=1
+          and state = 1
+          and user_id = #{params.passengerId}
+          and   to_days(create_time) = to_days(now());
+    </select>
 </mapper>
