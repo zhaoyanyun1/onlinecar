@@ -82,7 +82,7 @@ public class UsersController{
         @ApiImplicitParam(name = "page", value = "页码", dataType = "String", paramType = "query"),
         @ApiImplicitParam(name = "size", value = "每页显示的条数", dataType = "String", paramType = "query", defaultValue = "10")
     })
-    @PostMapping(value = "/list", name = "Users列表信息")
+    @PostMapping(value = "/drivers", name = "Users列表信息")
     @ResponseBody
     public Table list(@RequestParam(defaultValue = "{}") String search,
                       @RequestParam(defaultValue = "{}") String order,
@@ -96,13 +96,17 @@ public class UsersController{
         return table;
     }
 
-    @GetMapping(value = "/usersManage")
-    public String toManage(){
-        return "users/usersManage";
+    @GetMapping(value = "/driverManage")
+    public String driverManage(){
+        return "users/driverManage";
+    }
+    @GetMapping(value = "/passengerManage")
+    public String passengerManage(){
+        return "users/passengerManage";
     }
 
-    @GetMapping(value = "/toAdd")
+    @GetMapping(value = "/toAddDriver")
     public String toAdd(){
-        return "users/add";
+        return "users/addDriver";
     }
 }
