@@ -11,6 +11,7 @@
 <table id="drivers" lay-filter="drivers"></table>
 <script type="text/html" id="operation">
     <a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="recharge">充值</a>
     <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
 </script>
 <div id="form" style="display: none">
@@ -25,7 +26,31 @@
         var table = layui.table
             , $ = layui.$
             , form = layui.form;
-        var search = {'type':1}
+
+
+        //监听提交
+        form.on('submit(recharge)', function (data) {
+
+
+            if(data.field.balance==""){
+                return false;
+            }
+            $.ajax({
+                url: "recharge",
+                type: "post",
+                dataType: 'json',
+                contentType: 'application/json;charset=utf-8',
+                data: JSON.stringify(data.field),
+                success: function (data) {
+                    layer.close(layer.index);
+                    layer.msg(data.message);
+                }
+            });
+            return false;
+        });
+
+
+        var search = {'type': 1}
         //司机
         var userinfos = table.render({
             elem: '#drivers'
@@ -33,7 +58,7 @@
             , url: 'drivers' //数据接口
             , method: 'post'
             , page: true //开启分页
-            , where: {search:JSON.stringify(search)}
+            , where: {search: JSON.stringify(search)}
             , size: 'sm'
             , cols: [[ //表头
                 {field: 'name', title: '姓名', width: '20%', sort: true}
@@ -88,18 +113,41 @@
 
                 })
             }
+
+            if (layEvent === 'recharge') {
+                setRecharge(data);
+                layer.open({
+                    type: 1
+                    , title: '充值余额'
+                    , area: ['500px', '300px']
+                    , content: $('#recharge')
+                    , cancel: function () {
+                        userinfos.reload();
+                    }
+
+                })
+            }
         })
 
 
-        function setDetail(driver){
+        function setDetail(driver) {
             console.log(driver)
             $("span[name='name']").text(driver.name ? driver.name : '无数据');
             $("span[name='sex']").text(driver.sex ? driver.sex : '无数据');
+            $("span[name='phone']").text(driver.phone ? driver.phone : '无数据');
             $("span[name='age']").text(driver.age ? driver.age : '无数据');
             $("span[name='idcard']").text(driver.idcard ? driver.idcard : '无数据');
             $("span[name='carNum']").text(driver.carNum ? driver.carNum : '无数据');
         }
 
+        function setRecharge(driver) {
+            console.log(driver)
+            $("input[name='id']").val(driver.id ? driver.id : '');
+            $("input[name='name']").val(driver.name ? driver.name : '无数据');
+            $("input[name='phone']").val(driver.phone ? driver.phone : '无数据');
+            $("input[name='curBalance']").val(driver.balance ? driver.balance : 0);
+            $("input[name='balance']").val("");
+        }
     });
 
 
@@ -108,11 +156,30 @@
 </body>
 
 <div id="detail" style="display: none">
-    司机名称:  <span name="name"></span><br/>
-    司机性别:  <span name="sex"></span><br/>
-    司机年龄:  <span name="age"></span><br/>
-    司机车牌号:  <span name="carNum"></span><br/>
-    司机驾龄:  <span name="name"></span><br/>
-    司机身份证号:  <span name="idcard"></span><br/>
+    司机名称: <span name="name"></span><br/>
+    司机手机号: <span name="phone"></span><br/>
+    司机性别: <span name="sex"></span><br/>
+    司机年龄: <span name="age"></span><br/>
+    司机车牌号: <span name="carNum"></span><br/>
+    司机驾龄: <span name="name"></span><br/>
+    司机身份证号: <span name="idcard"></span><br/>
+</div>
+
+
+<div id="recharge" style="display: none">
+
+    <form class="layui-form" method="post" id="rechargeForm">
+        司机名称: <input name="name" readonly="readonly"/><br/>
+        司机手机号: <input name="phone" readonly="readonly"/><br/>
+        当前余额: <input name="curBalance" readonly="readonly"/><br/>
+        充值金额： <input placeholder="0" name="balance"/><br/>
+        <input name="id" value="" type="hidden"/>
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn" lay-submit="lay-submit" lay-filter="recharge">立即提交</button>
+            </div>
+        </div>
+    </form>
 </div>
 </html>

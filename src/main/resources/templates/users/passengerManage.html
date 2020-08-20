@@ -6,12 +6,10 @@
     <div th:include="fragment/head :: head"></div>
 </head>
 <body>
-<a class="layui-btn layui-btn-sm" id="add">添加司机</a>
 
-<table id="drivers" lay-filter="drivers"></table>
+<table id="passenger" lay-filter="passenger"></table>
 <script type="text/html" id="operation">
     <a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>
-    <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
 </script>
 <div id="form" style="display: none">
 
@@ -25,37 +23,24 @@
         var table = layui.table
             , $ = layui.$
             , form = layui.form;
-        var search = {'type':1}
+        var search = {'type': 2}
         //司机
         var userinfos = table.render({
-            elem: '#drivers'
-            , id: 'drivers'
-            , url: 'drivers' //数据接口
+            elem: '#passenger'
+            , id: 'passenger'
+            , url: 'passenger' //数据接口
             , method: 'post'
             , page: true //开启分页
-            , where: {search:JSON.stringify(search)}
+            , where: {search: JSON.stringify(search)}
             , size: 'sm'
             , cols: [[ //表头
                 {field: 'name', title: '姓名', width: '20%', sort: true}
-                , {field: 'sex', title: '性别', width: '20%', sort: true}
-                , {field: 'carNum', title: '车牌号', width: '20%', sort: true}
-                , {field: 'idcard', title: '身份证号', width: '20%', sort: true}
+                , {field: 'phone', title: '手机号', width: '20%', sort: true}
+                , {field: 'integral', title: '积分', width: '20%', sort: true}
                 , {field: 'operation', title: '操作', width: '20%', sort: true, toolbar: '#operation'}
             ]]
         });
-        $("#add").click(function () {
-            layer.open({
-                type: 2
-                , title: '添加司机信息'
-                , area: ['500px', '300px']
-                , content: ["toAdd", "yes"] // 第二个参数代表滚动条
-                , cancel: function () {
-                    userinfos.reload();
-                }
-
-            })
-        });
-        table.on('tool(drivers)', function (obj) {
+        table.on('tool(passenger)', function (obj) {
             var layEvent = obj.event;
             var data = obj.data;
             console.log(data);
@@ -79,7 +64,7 @@
                 setDetail(data);
                 layer.open({
                     type: 1
-                    , title: '司机信息详情'
+                    , title: '乘客信息详情'
                     , area: ['500px', '300px']
                     , content: $('#detail')
                     , cancel: function () {
@@ -91,10 +76,11 @@
         })
 
 
-        function setDetail(driver){
+        function setDetail(driver) {
             console.log(driver)
             $("span[name='name']").text(driver.name ? driver.name : '无数据');
             $("span[name='sex']").text(driver.sex ? driver.sex : '无数据');
+            $("span[name='phone']").text(driver.phone ? driver.phone : '无数据');
             $("span[name='age']").text(driver.age ? driver.age : '无数据');
             $("span[name='idcard']").text(driver.idcard ? driver.idcard : '无数据');
             $("span[name='carNum']").text(driver.carNum ? driver.carNum : '无数据');
@@ -108,11 +94,9 @@
 </body>
 
 <div id="detail" style="display: none">
-    司机名称:  <span name="name"></span><br/>
-    司机性别:  <span name="sex"></span><br/>
-    司机年龄:  <span name="age"></span><br/>
-    司机车牌号:  <span name="carNum"></span><br/>
-    司机驾龄:  <span name="name"></span><br/>
-    司机身份证号:  <span name="idcard"></span><br/>
+    名称: <span name="name"></span><br/>
+    性别: <span name="sex"></span><br/>
+    手机号: <span name="phone"></span><br/>
+    年龄: <span name="age"></span><br/>
 </div>
 </html>
