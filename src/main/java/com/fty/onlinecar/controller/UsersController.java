@@ -1,9 +1,11 @@
 package com.fty.onlinecar.controller;
 
+import com.fty.onlinecar.entity.IntegralDetail;
 import com.fty.onlinecar.response.Result;
 import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.response.Table;
+import com.fty.onlinecar.service.IntegralDetailService;
 import com.fty.onlinecar.service.UsersService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -29,10 +31,14 @@ public class UsersController {
     @Resource
     private UsersService usersService;
 
+    @Resource
+    private IntegralDetailService integralDetailService;
+
     @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
     @PostMapping(value = "/addDriver", name = "Drivers添加")
     @ResponseBody
     public Result addDriver(@RequestBody Users users) {
+        users.setInvitationCode(users.getPhone());
         users.setType(1);
         users.setPassword("123456");
         usersService.save(users);
@@ -43,6 +49,19 @@ public class UsersController {
     @PostMapping(value = "/addPassenger", name = "Drivers添加")
     @ResponseBody
     public Result addPassenger(@RequestBody Users users) {
+        users.setInvitationCode(users.getPhone());
+
+        //判读用户是否填了邀请码，邀请人是否存在
+        if(users.getInvitees()!=null){
+            Users invitees = usersService.findBy("invitation_code",users.getInvitees());
+            if(invitees == null){
+                //Todo 返回邀请码错误
+                return ResultGenerator.genFailResult();
+            }
+
+            integralDetailService.addIntegral(invitees,1,"邀请用户");
+
+        }
         users.setType(2);
         usersService.save(users);
         return ResultGenerator.genSuccessResult();

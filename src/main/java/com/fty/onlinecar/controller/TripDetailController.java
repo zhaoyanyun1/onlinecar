@@ -170,7 +170,7 @@ public class TripDetailController{
     }
 
     /**
-     * 司机查看同行乘客
+     * 取消行程
      * @return
      */
     @PostMapping(value = "/cancelTrip", name = "Users列表信息")

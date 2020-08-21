@@ -1,8 +1,11 @@
 package com.fty.onlinecar.service.impl;
 
 import com.fty.onlinecar.dao.TripDetailMapper;
+import com.fty.onlinecar.entity.IntegralDetail;
 import com.fty.onlinecar.entity.TripDetail;
 import com.fty.onlinecar.entity.Users;
+import com.fty.onlinecar.service.BalanceDetailService;
+import com.fty.onlinecar.service.IntegralDetailService;
 import com.fty.onlinecar.service.TripDetailService;
 import com.fty.onlinecar.base.service.AbstractService;
 import com.fty.onlinecar.service.UsersService;
@@ -30,6 +33,12 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
 
     @Resource
     private UsersService usersService;
+
+    @Resource
+    private IntegralDetailService integralDetailService;
+
+    @Resource
+    private BalanceDetailService balanceDetailService;
 
     @Override
     public Result list(String search, String order, Integer page, Integer size){
@@ -61,10 +70,15 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
         this.save(tripDetail);
 
         //Todo 积分计算
-//        Users driver = usersService.findById(pTripDetail.getDriverId());
-//        Users passenger = usersService.findById(tripDetail.getUserId());
-//        String balance =String.valueOf(Integer.parseInt(driver.getBalance())-1);
-//        driver.setBalance(balance);
+        Users driver = usersService.findById(pTripDetail.getDriverId());
+        Users passenger = usersService.findById(tripDetail.getUserId());
+        if(passenger.getInvitees()!=null && !passenger.getInvitees().equals("")){
+            Users invitees = usersService.findBy("invitation_code",passenger.getInvitees());
+            integralDetailService.addIntegral(invitees,1,"邀请用户乘车");
+            balanceDetailService.lessen(driver,"-2","乘客确认同行");
+
+        }
+        integralDetailService.addIntegral(passenger,1,"乘车");
     }
 
     @Override

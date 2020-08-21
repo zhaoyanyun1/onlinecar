@@ -45,6 +45,12 @@ public class Users implements Serializable {
 
     private String balance;
 
+    @Column(name = "invitation_code")
+    private String invitationCode;
+
+    @Column(name = "Invitees")
+    private String invitees;
+
     private String state;
 
     @Column(name = "create_time")
@@ -277,6 +283,34 @@ public class Users implements Serializable {
      */
     public void setBalance(String balance) {
         this.balance = balance;
+    }
+
+    /**
+     * @return invitation_code
+     */
+    public String getInvitationCode() {
+        return invitationCode;
+    }
+
+    /**
+     * @param invitationCode
+     */
+    public void setInvitationCode(String invitationCode) {
+        this.invitationCode = invitationCode;
+    }
+
+    /**
+     * @return Invitees
+     */
+    public String getInvitees() {
+        return invitees;
+    }
+
+    /**
+     * @param invitees
+     */
+    public void setInvitees(String invitees) {
+        this.invitees = invitees;
     }
 
     /**

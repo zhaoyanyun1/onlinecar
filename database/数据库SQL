@@ -146,3 +146,8 @@ CREATE TABLE `online_car`.`users` (
   `create_time` DATETIME NULL,
   `update_time` DATETIME NULL,
   PRIMARY KEY (`id`));
+
+
+  ALTER TABLE `online_car`.`users`
+  ADD COLUMN `invitation_code` VARCHAR(45) NULL AFTER `balance`,
+  ADD COLUMN `Invitees` VARCHAR(45) NULL AFTER `invitation_code`;
