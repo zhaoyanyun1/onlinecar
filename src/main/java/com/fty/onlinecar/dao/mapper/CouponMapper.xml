@@ -14,4 +14,9 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+  <select id="webFindlist" resultType="com.fty.onlinecar.base.ResultMap">
+    select * from coupon
+    where 1=1
+    and to_days(term_validity) >= to_days(now());
+  </select>
 </mapper>

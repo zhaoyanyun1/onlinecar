@@ -1,24 +1,18 @@
 package com.fty.onlinecar.controller;
 
-import com.fty.onlinecar.entity.IntegralDetail;
+import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.response.Result;
 import com.fty.onlinecar.response.ResultGenerator;
-import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.IntegralDetailService;
 import com.fty.onlinecar.service.UsersService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import io.swagger.annotations.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import tk.mybatis.mapper.entity.Condition;
-import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
-
-import io.swagger.annotations.*;
 
 
 /**
@@ -34,6 +28,9 @@ public class UsersController {
     @Resource
     private IntegralDetailService integralDetailService;
 
+
+
+
     @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
     @PostMapping(value = "/addDriver", name = "Drivers添加")
     @ResponseBody
@@ -45,6 +42,8 @@ public class UsersController {
         return ResultGenerator.genSuccessResult();
     }
 
+
+
     @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
     @PostMapping(value = "/addPassenger", name = "Drivers添加")
     @ResponseBody
@@ -53,7 +52,7 @@ public class UsersController {
 
         //判读用户是否填了邀请码，邀请人是否存在
         if(users.getInvitees()!=null){
-            Users invitees = usersService.findBy("invitation_code",users.getInvitees());
+            Users invitees = usersService.findBy("invitationCode",users.getInvitees());
             if(invitees == null){
                 //Todo 返回邀请码错误
                 return ResultGenerator.genFailResult();
@@ -62,10 +61,15 @@ public class UsersController {
             integralDetailService.addIntegral(invitees,1,"邀请用户");
 
         }
+        users.setState("1");
         users.setType(2);
         usersService.save(users);
         return ResultGenerator.genSuccessResult();
     }
+
+
+
+
 
     @ApiOperation(value = "Users删除", tags = {"Users"}, notes = "Users删除")
     @ApiImplicitParams({
@@ -78,12 +82,20 @@ public class UsersController {
         return ResultGenerator.genSuccessResult();
     }
 
+
+
+
+
     @ApiOperation(value = "Users修改", tags = {"Users"}, notes = "Users修改,对象主键必填")
     @PostMapping(value = "/update", name = "Users修改")
     public Result update(@ApiParam Users users) {
         usersService.update(users);
         return ResultGenerator.genSuccessResult();
     }
+
+
+
+
 
     @ApiOperation(value = "充值", tags = {"Users"}, notes = "Users修改,对象主键必填")
     @PostMapping(value = "/recharge", name = "充值")
@@ -96,6 +108,10 @@ public class UsersController {
         return ResultGenerator.genSuccessResult();
     }
 
+
+
+
+
     @ApiOperation(value = "Users详细信息", tags = {"Users"}, notes = "Users详细信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", required = true, value = "Usersid", dataType = "Long", paramType = "query")
@@ -105,6 +121,9 @@ public class UsersController {
         Users users = usersService.findById(id);
         return ResultGenerator.genSuccessResult(users);
     }
+
+
+
 
     @ApiOperation(value = "Users列表信息", tags = {"Users"}, notes = "Users列表信息")
     @ApiImplicitParams({

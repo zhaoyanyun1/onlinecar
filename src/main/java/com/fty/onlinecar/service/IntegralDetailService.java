@@ -11,4 +11,5 @@ public interface IntegralDetailService extends Service<IntegralDetail> {
    Result list(String search, String order, Integer page, Integer size);
 
    void addIntegral(Users users,Integer num, String detail);
+   void lessIntegral(Users users,Integer num, String detail);
 }

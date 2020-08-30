@@ -86,6 +86,18 @@ public class CouponController{
         return table;
     }
 
+    @PostMapping(value = "/webFindlist", name = "Coupon列表信息")
+    @ResponseBody
+    public Table webFindlist() {
+
+        List<Map<String, Object>> list = couponService.webFindlist();
+        Table table = new Table();
+        table.setData(list);
+        table.setCount(list.size());
+        return table;
+    }
+
+
     @GetMapping(value = "/couponManage")
     public String toManage(){
         return "coupon/couponManage";

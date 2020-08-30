@@ -1,26 +1,21 @@
 package com.fty.onlinecar.controller;
+
+import com.fty.onlinecar.entity.TripDetail;
 import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.response.Result;
-import com.fty.onlinecar.response.ResultEnum;
 import com.fty.onlinecar.response.ResultGenerator;
-import com.fty.onlinecar.entity.TripDetail;
-import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.TripDetailService;
 import com.fty.onlinecar.service.UsersService;
 import com.fty.onlinecar.utils.JSONUtils;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.sun.tools.javac.comp.Todo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
-import sun.jvm.hotspot.asm.Register;
-import tk.mybatis.mapper.entity.Condition;
-import tk.mybatis.mapper.entity.Example;
+
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.swagger.annotations.*;
 
 
 
@@ -49,6 +44,10 @@ public class TripDetailController{
             }
             if(pTripDetail.getSurplusSeatNum()<1){
                 //Todo 返回对应行程已经满座
+                return ResultGenerator.genFailResult();
+            }
+            if(pTripDetail.getSurplusSeatNum()<tripDetail.getAllSeatNum()){
+                //Todo 返回对应行程剩余座位数不足
                 return ResultGenerator.genFailResult();
             }
             //Todo 判断发车时间是否已经过期
@@ -97,7 +96,16 @@ public class TripDetailController{
 
     @ApiOperation(value = "TripDetail修改", tags = {"TripDetail"}, notes = "TripDetail修改,对象主键必填")
     @PostMapping(value="/update",name="TripDetail修改")
-    public Result update(@ApiParam TripDetail tripDetail) {
+    @ResponseBody
+    public Result update(@RequestBody TripDetail tripDetail) {
+        if(tripDetail.getState().equals("3")){
+            List<Map<String, Object>> list = tripDetailService.findPeersPassenger(tripDetail.getId());
+            for (Map<String, Object> map: list) {
+                TripDetail tripDetail1 = tripDetailService.findById(map.get("id"));
+                tripDetail1.setState("3");
+                tripDetailService.update(tripDetail1);
+            }
+        }
         tripDetailService.update(tripDetail);
         return ResultGenerator.genSuccessResult();
     }
@@ -107,8 +115,9 @@ public class TripDetailController{
         @ApiImplicitParam(name = "id",required=true, value = "TripDetailid", dataType = "Long", paramType = "query")
     })
     @PostMapping(value="/detail",name="TripDetail详细信息")
-    public Result detail(@RequestParam Integer id) {
-        TripDetail tripDetail = tripDetailService.findById(id);
+    @ResponseBody
+    public Result detail(@RequestParam("id") String id) {
+        Map<String,Object> tripDetail = tripDetailService.getById(id);
         return ResultGenerator.genSuccessResult(tripDetail);
     }
 
@@ -130,7 +139,7 @@ public class TripDetailController{
 
     @PostMapping(value = "/driverTriplist", name = "TripDetail列表信息")
     public Result driverTriplist(@RequestBody String search) {
-        List<Map<String,Object>> list = tripDetailService.driverTriplist();
+        List<Map<String,Object>> list = tripDetailService.driverTriplist(search);
         return ResultGenerator.genSuccessResult(list);
     }
 
@@ -145,11 +154,11 @@ public class TripDetailController{
         return ResultGenerator.genSuccessResult(tripDetail);
     }
 
-    @PostMapping(value="/findCurTripByPassenger",name="查询司机当前行程")
+    @PostMapping(value="/findCurTripByPassenger",name="查询乘客当前行程")
     @ResponseBody
     public Result findCurTripByPassenger(@RequestBody String search) {
         Map<String, Object> params = JSONUtils.json2map(search);
-        TripDetail tripDetail = tripDetailService.findCurTripByPassenger(params);
+        Map<String,Object> tripDetail = tripDetailService.findCurTripByPassenger(params);
         if(tripDetail ==null){
             return ResultGenerator.genNoTripResult();
         }

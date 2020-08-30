@@ -15,24 +15,33 @@
         <result column="state" jdbcType="VARCHAR" property="state"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="trips_direction" jdbcType="VARCHAR" property="tripsDirection"/>
     </resultMap>
 
     <select id="driverTriplist" resultType="com.fty.onlinecar.base.ResultMap">
-    select td.*,u.name,u.phone from trip_detail td
-    left join users u
-    on u.id = td.driver_id
-    where 1=1
-    and td.state = 1
-    and td.driver_id != ''
-    and to_days(td.create_time) = to_days(now());
-  </select>
+        select td.*,u.name,u.phone from trip_detail td
+        left join users u
+        on u.id = td.driver_id
+        where 1=1
+        and td.state != 3
+        and td.driver_id != ''
+        and to_days(td.create_time) = to_days(now())
+        <if test="params.times!=null and params.times!=''">
+            and td.departure_time = #{params.times}
+        </if>
+        <if test="params.tripsDirection!=null and params.tripsDirection !=''">
+            and td.trips_direction = #{params.tripsDirection}
+        </if>
+        order by u.integral desc
+    </select>
 
     <select id="findCurTripByDriver" resultMap="BaseResultMap">
 
         select * from trip_detail
           where 1=1
-          and state = 1
+          and state!=3
           and driver_id = #{params.driverId}
+          and p_id is null
           and to_days(create_time) = to_days(now());
     </select>
 
@@ -46,11 +55,21 @@
         and  td.p_id = #{tripId}
     </select>
 
-    <select id="findCurTripByPassenger" resultMap="BaseResultMap">
-         select * from trip_detail
+    <select id="findCurTripByPassenger" resultType="com.fty.onlinecar.base.ResultMap">
+
+    select td.*,d.name as driverName,d.phone as driverPhone from trip_detail td
+		left join users d
+        on d.id = td.driver_id
           where 1=1
-          and state = 1
-          and user_id = #{params.passengerId}
-          and   to_days(create_time) = to_days(now());
+          and td.state = 1
+          and td.user_id = #{params.passengerId}
+          and   to_days(td.create_time) = to_days(now());
+    </select>
+    <select id="getById" resultType="com.fty.onlinecar.base.ResultMap">
+        select td.*,u.phone,u.name from trip_detail td
+        left join users u
+        on u.id = td.driver_id
+        where 1=1
+        and  td.id = #{id}
     </select>
 </mapper>

@@ -12,13 +12,15 @@ import java.util.Map;
 public interface TripDetailService extends Service<TripDetail> {
    Result list(String search, String order, Integer page, Integer size);
 
-   List<Map<String,Object>> driverTriplist();
+   List<Map<String,Object>> driverTriplist(String search);
 
    void confirmTrip(TripDetail tripDetail,TripDetail pTripDetail);
 
    TripDetail findCurTripByDriver(Map<String,Object> params);
-   TripDetail findCurTripByPassenger(Map<String,Object> params);
+   Map<String,Object> findCurTripByPassenger(Map<String,Object> params);
 
    List<Map<String, Object>> findPeersPassenger(Integer tripId);
+
+   Map<String, Object> getById(String id);
 
 }

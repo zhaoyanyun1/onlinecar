@@ -1,14 +1,12 @@
 package com.fty.onlinecar.service.impl;
 
 import com.fty.onlinecar.dao.TripDetailMapper;
+import com.fty.onlinecar.entity.CouponDetail;
 import com.fty.onlinecar.entity.IntegralDetail;
 import com.fty.onlinecar.entity.TripDetail;
 import com.fty.onlinecar.entity.Users;
-import com.fty.onlinecar.service.BalanceDetailService;
-import com.fty.onlinecar.service.IntegralDetailService;
-import com.fty.onlinecar.service.TripDetailService;
+import com.fty.onlinecar.service.*;
 import com.fty.onlinecar.base.service.AbstractService;
-import com.fty.onlinecar.service.UsersService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +38,9 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     @Resource
     private BalanceDetailService balanceDetailService;
 
+    @Resource
+    private CouponDetailService couponDetailService;
+
     @Override
     public Result list(String search, String order, Integer page, Integer size){
         Map<String, Object> params = JSONUtils.json2map(search);
@@ -55,8 +56,9 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     }
 
     @Override
-    public List<Map<String, Object>> driverTriplist() {
-        List<Map<String, Object>> res = tripDetailMapper.driverTriplist();
+    public List<Map<String, Object>> driverTriplist(String search) {
+        Map<String, Object> params = JSONUtils.json2map(search);
+        List<Map<String, Object>> res = tripDetailMapper.driverTriplist(params);
         return res;
     }
 
@@ -64,7 +66,9 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     public void confirmTrip(TripDetail tripDetail, TripDetail pTripDetail) {
         //成功确认行程
         tripDetail.setState("1");
-        pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()-1);
+        tripDetail.setTripsDirection(pTripDetail.getTripsDirection());
+        tripDetail.setDriverId(pTripDetail.getDriverId());
+        pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()-tripDetail.getAllSeatNum());
         this.update(pTripDetail);
         tripDetail.setDepartureTime(pTripDetail.getDepartureTime());
         this.save(tripDetail);
@@ -72,13 +76,18 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
         //Todo 积分计算
         Users driver = usersService.findById(pTripDetail.getDriverId());
         Users passenger = usersService.findById(tripDetail.getUserId());
-        if(passenger.getInvitees()!=null && !passenger.getInvitees().equals("")){
-            Users invitees = usersService.findBy("invitation_code",passenger.getInvitees());
-            integralDetailService.addIntegral(invitees,1,"邀请用户乘车");
-            balanceDetailService.lessen(driver,"-2","乘客确认同行");
+        integralDetailService.addIntegral(passenger,tripDetail.getAllSeatNum(),"乘车");
+        balanceDetailService.lessen(driver,"-"+tripDetail.getAllSeatNum(),"乘客确认同行");
 
+        //查询乘客可用优惠券
+        List<Map<String, Object>> couponlist = couponDetailService.findAvailableByUserId(tripDetail.getUserId());
+        if(couponlist !=null && couponlist.size()>0){
+            CouponDetail couponDetail = couponDetailService.findById(couponlist.get(0).get("id"));
+            couponDetail.setState("2");
+            couponDetail.setTripId(String.valueOf(tripDetail.getId()));
+            couponDetailService.update(couponDetail);
         }
-        integralDetailService.addIntegral(passenger,1,"乘车");
+
     }
 
     @Override
@@ -87,12 +96,17 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     }
 
     @Override
-    public TripDetail findCurTripByPassenger(Map<String,Object> params) {
+    public Map<String,Object> findCurTripByPassenger(Map<String,Object> params) {
         return tripDetailMapper.findCurTripByPassenger(params);
     }
 
     @Override
     public List<Map<String, Object>> findPeersPassenger(Integer tripId) {
         return tripDetailMapper.findPeersPassenger(tripId);
+    }
+
+    @Override
+    public Map<String, Object> getById(String id) {
+        return tripDetailMapper.getById(id);
     }
 }

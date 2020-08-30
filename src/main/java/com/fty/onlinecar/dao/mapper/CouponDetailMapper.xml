@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fty.onlinecar.dao.CouponDetailMapper">
+  <resultMap id="BaseResultMap" type="com.fty.onlinecar.entity.CouponDetail">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_type" jdbcType="VARCHAR" property="userType" />
+    <result column="coupon_id" jdbcType="VARCHAR" property="couponId" />
+    <result column="trip_id" jdbcType="VARCHAR" property="tripId" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <select id="passengerCouponlist"  resultType="com.fty.onlinecar.base.ResultMap">
+    select cd.*,c.name,c.term_validity as termValidity,c.money from coupon_detail cd
+    left join coupon c
+    on c.id = cd.coupon_id
+    where 1=1
+    and cd.state = #{params.state}
+    and cd.user_id = #{params.userId}
+    and to_days(c.term_validity) >= to_days(now());
+  </select>
+
+  <select id="findAvailableByUserId" resultType="com.fty.onlinecar.base.ResultMap">
+    select cd.*,c.name,c.money,c.term_validity from coupon_detail cd
+    left join coupon c
+    on c.id = cd.coupon_id
+    where 1=1
+    and cd.user_id = #{userId}
+    and cd.state = 1
+    and cd.trip_id is null
+    and to_days(c.term_validity) >= to_days(now());
+    order by c.money desc
+  </select>
+</mapper>

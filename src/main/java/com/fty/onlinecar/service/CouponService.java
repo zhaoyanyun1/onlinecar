@@ -11,4 +11,5 @@ import java.util.Map;
  */
 public interface CouponService extends Service<Coupon> {
    List<Map<String, Object>> list(String search, String order, Integer page, Integer size);
+   List<Map<String, Object>> webFindlist();
 }

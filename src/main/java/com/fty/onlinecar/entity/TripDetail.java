@@ -36,6 +36,9 @@ public class TripDetail implements Serializable {
     @Column(name = "update_time")
     private Date updateTime;
 
+    @Column(name = "trips_direction")
+    private String tripsDirection;
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -176,5 +179,19 @@ public class TripDetail implements Serializable {
      */
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    /**
+     * @return trips_direction
+     */
+    public String getTripsDirection() {
+        return tripsDirection;
+    }
+
+    /**
+     * @param tripsDirection
+     */
+    public void setTripsDirection(String tripsDirection) {
+        this.tripsDirection = tripsDirection;
     }
 }
