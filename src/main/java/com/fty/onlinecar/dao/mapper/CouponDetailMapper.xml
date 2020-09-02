@@ -33,7 +33,7 @@
     and cd.user_id = #{userId}
     and cd.state = 1
     and cd.trip_id is null
-    and to_days(c.term_validity) >= to_days(now());
+    and to_days(c.term_validity) >= to_days(now())
     order by c.money desc
   </select>
 </mapper>

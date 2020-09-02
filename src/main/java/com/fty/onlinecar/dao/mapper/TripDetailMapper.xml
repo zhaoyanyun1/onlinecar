@@ -47,9 +47,13 @@
 
     <select id="findPeersPassenger" resultType="com.fty.onlinecar.base.ResultMap">
 
-        select td.*,u.phone from trip_detail td
+        select td.*,u.phone,cd.coupon_id,c.name as couponName,c.money from trip_detail td
         left join users u
         on u.id = td.user_id
+        left join coupon_detail cd
+        on cd.trip_id = td.id
+        left join coupon c
+        on c.id=cd.coupon_id
         where 1=1
         and td.state = 1
         and  td.p_id = #{tripId}
@@ -57,9 +61,13 @@
 
     <select id="findCurTripByPassenger" resultType="com.fty.onlinecar.base.ResultMap">
 
-    select td.*,d.name as driverName,d.phone as driverPhone from trip_detail td
+    select td.*,d.name as driverName,d.phone as driverPhone,cd.coupon_id,c.name as couponName,c.money from trip_detail td
 		left join users d
         on d.id = td.driver_id
+        left join coupon_detail cd
+        on cd.trip_id = td.id
+        left join coupon c
+        on c.id=cd.coupon_id
           where 1=1
           and td.state = 1
           and td.user_id = #{params.passengerId}

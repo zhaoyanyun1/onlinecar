@@ -94,6 +94,14 @@ public class UsersController {
     }
 
 
+    @ApiOperation(value = "Users修改", tags = {"Users"}, notes = "Users修改,对象主键必填")
+    @PostMapping(value = "/shareAddIntegral", name = "Users修改")
+    public Result shareAddIntegral(@RequestParam("userId") Integer usersId) {
+        Users users = usersService.findById(usersId);
+        integralDetailService.addIntegral(users,1,"分享链接");
+        return ResultGenerator.genSuccessResult();
+    }
+
 
 
 
