@@ -2,6 +2,7 @@ package com.fty.onlinecar.controller;
 
 import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.response.Result;
+import com.fty.onlinecar.response.ResultEnum;
 import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.IntegralDetailService;
@@ -48,13 +49,18 @@ public class UsersController {
     @PostMapping(value = "/addPassenger", name = "Drivers添加")
     @ResponseBody
     public Result addPassenger(@RequestBody Users users) {
+
+        Users users1 = usersService.findBy("phone",users.getPhone());
+        if(users1 != null ){
+            return ResultGenerator.genRegisterFailResult();
+        }
+
         users.setInvitationCode(users.getPhone());
 
         //判读用户是否填了邀请码，邀请人是否存在
         if(users.getInvitees()!=null){
             Users invitees = usersService.findBy("invitationCode",users.getInvitees());
             if(invitees == null){
-                //Todo 返回邀请码错误
                 return ResultGenerator.genFailResult();
             }
 
@@ -96,12 +102,26 @@ public class UsersController {
 
     @ApiOperation(value = "Users修改", tags = {"Users"}, notes = "Users修改,对象主键必填")
     @PostMapping(value = "/shareAddIntegral", name = "Users修改")
+    @ResponseBody
     public Result shareAddIntegral(@RequestParam("userId") Integer usersId) {
         Users users = usersService.findById(usersId);
         integralDetailService.addIntegral(users,1,"分享链接");
         return ResultGenerator.genSuccessResult();
     }
 
+    @ApiOperation(value = "Users修改", tags = {"Users"}, notes = "Users修改,对象主键必填")
+    @PostMapping(value = "/updatePassword", name = "Users修改")
+    @ResponseBody
+    public Result updatePassword(@RequestBody Object requestData) {
+        Map<String,Object> map =(Map) requestData;
+        Users users = usersService.findById(map.get("userId"));
+        if(!users.getPassword().equals(map.get("oldPassword"))){
+            return ResultGenerator.genResult(ResultEnum.OLDPASSWORD_FAIL);
+        }
+        users.setPassword(map.get("newPassword").toString());
+        usersService.update(users);
+        return ResultGenerator.genSuccessResult();
+    }
 
 
 
@@ -124,9 +144,10 @@ public class UsersController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", required = true, value = "Usersid", dataType = "Long", paramType = "query")
     })
-    @PostMapping(value = "/detail", name = "Users详细信息")
-    public Result detail(@RequestParam Integer id) {
-        Users users = usersService.findById(id);
+    @PostMapping(value = "/getUserInfo", name = "Users详细信息")
+    @ResponseBody
+    public Result detail(@RequestParam("userId") Integer usersId) {
+        Users users = usersService.findById(usersId);
         return ResultGenerator.genSuccessResult(users);
     }
 

@@ -73,21 +73,44 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
         tripDetail.setDepartureTime(pTripDetail.getDepartureTime());
         this.save(tripDetail);
 
-        //Todo 积分计算
-        Users driver = usersService.findById(pTripDetail.getDriverId());
-        Users passenger = usersService.findById(tripDetail.getUserId());
-        integralDetailService.addIntegral(passenger,tripDetail.getAllSeatNum(),"乘车");
-        balanceDetailService.lessen(driver,"-"+tripDetail.getAllSeatNum(),"乘客确认同行");
 
-        //查询乘客可用优惠券
-        List<Map<String, Object>> couponlist = couponDetailService.findAvailableByUserId(tripDetail.getUserId());
-        if(couponlist !=null && couponlist.size()>0){
-            CouponDetail couponDetail = couponDetailService.findById(couponlist.get(0).get("id"));
-            couponDetail.setState("2");
-            couponDetail.setTripId(String.valueOf(tripDetail.getId()));
-            couponDetailService.update(couponDetail);
+
+    }
+
+    @Override
+    public void updateTripState(TripDetail tripDetail) {
+        List<Map<String, Object>> list = this.findPeersPassenger(tripDetail.getId());
+        if(tripDetail.getState().equals("3")){
+            for (Map<String, Object> map: list) {
+                TripDetail tripDetail1 = this.findById(map.get("id"));
+                tripDetail1.setState("3");
+                this.update(tripDetail1);
+
+
+
+                //Todo 积分计算
+                Users driver = usersService.findById(tripDetail1.getDriverId());
+                Users passenger = usersService.findById(tripDetail1.getUserId());
+                integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
+                balanceDetailService.lessen(driver,"-"+tripDetail1.getAllSeatNum(),"乘客确认同行");
+
+            }
+
+        }else if(tripDetail.getState().equals("2")){
+            for (Map<String, Object> map: list) {
+                TripDetail tripDetail1 = this.findById(map.get("id"));
+                //查询乘客可用优惠券
+                List<Map<String, Object>> couponlist = couponDetailService.findAvailableByUserId(tripDetail1.getUserId());
+                if(couponlist !=null && couponlist.size()>0){
+                    CouponDetail couponDetail = couponDetailService.findById(couponlist.get(0).get("id"));
+                    couponDetail.setState("2");
+                    couponDetail.setTripId(String.valueOf(tripDetail.getId()));
+                    couponDetailService.update(couponDetail);
+                }
+            }
+
         }
-
+        this.update(tripDetail);
     }
 
     @Override

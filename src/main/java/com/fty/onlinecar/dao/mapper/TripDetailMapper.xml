@@ -24,7 +24,7 @@
         on u.id = td.driver_id
         where 1=1
         and td.state != 3
-        and td.driver_id != ''
+        and td.p_id is null
         and to_days(td.create_time) = to_days(now())
         <if test="params.times!=null and params.times!=''">
             and td.departure_time = #{params.times}
@@ -55,7 +55,7 @@
         left join coupon c
         on c.id=cd.coupon_id
         where 1=1
-        and td.state = 1
+        and td.state != 3
         and  td.p_id = #{tripId}
     </select>
 

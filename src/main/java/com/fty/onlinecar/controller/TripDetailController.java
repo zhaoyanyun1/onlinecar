@@ -39,16 +39,13 @@ public class TripDetailController{
         if(tripDetail.getpId()!=null && !tripDetail.getpId().equals("")){
             TripDetail pTripDetail = tripDetailService.findById(tripDetail.getpId());
             if(pTripDetail == null){
-                //Todo 返回没有对应行程或对应行程已经取消
-                return ResultGenerator.genFailResult();
+                return ResultGenerator.genNoDurTripResult();
             }
             if(pTripDetail.getSurplusSeatNum()<1){
-                //Todo 返回对应行程已经满座
-                return ResultGenerator.genFailResult();
+                return ResultGenerator.genTripFullResult();
             }
             if(pTripDetail.getSurplusSeatNum()<tripDetail.getAllSeatNum()){
-                //Todo 返回对应行程剩余座位数不足
-                return ResultGenerator.genFailResult();
+                return ResultGenerator.genSeatLowResult();
             }
             //Todo 判断发车时间是否已经过期
 
@@ -64,13 +61,11 @@ public class TripDetailController{
                 return ResultGenerator.genFailResult();
             }
             if(users.getBalance()==null || users.getBalance().equals("") ){
-                //Todo 返回司机余额不足
-                return ResultGenerator.genFailResult();
+                return ResultGenerator.genBalanceLowResult();
             }
 
             if(Integer.parseInt(users.getBalance())<=0 || Integer.parseInt(users.getBalance())<(tripDetail.getAllSeatNum()*2)){
-                //Todo 返回司机余额不足
-                return ResultGenerator.genFailResult();
+                return ResultGenerator.genBalanceLowResult();
             }
 
             //Todo 判断司机当天有没有发布行程
@@ -78,9 +73,6 @@ public class TripDetailController{
             tripDetail.setSurplusSeatNum(tripDetail.getAllSeatNum());
             tripDetailService.save(tripDetail);
         }
-
-
-        //Todo 成功同行后，积分加减
         return ResultGenerator.genSuccessResult();
     }
 
@@ -98,15 +90,9 @@ public class TripDetailController{
     @PostMapping(value="/update",name="TripDetail修改")
     @ResponseBody
     public Result update(@RequestBody TripDetail tripDetail) {
-        if(tripDetail.getState().equals("3")){
-            List<Map<String, Object>> list = tripDetailService.findPeersPassenger(tripDetail.getId());
-            for (Map<String, Object> map: list) {
-                TripDetail tripDetail1 = tripDetailService.findById(map.get("id"));
-                tripDetail1.setState("3");
-                tripDetailService.update(tripDetail1);
-            }
-        }
-        tripDetailService.update(tripDetail);
+
+        tripDetailService.updateTripState(tripDetail);
+
         return ResultGenerator.genSuccessResult();
     }
 
@@ -182,12 +168,18 @@ public class TripDetailController{
      * 取消行程
      * @return
      */
-    @PostMapping(value = "/cancelTrip", name = "Users列表信息")
+    @ApiOperation(value = "TripDetail修改", tags = {"TripDetail"}, notes = "TripDetail修改,对象主键必填")
+        @PostMapping(value="/cancelTrip",name="TripDetail修改")
     @ResponseBody
-    public Result cancelTrip(@RequestBody Integer tripId) {
-        TripDetail tripDetail = tripDetailService.findById(tripId);
-        tripDetail.setState("0");
-//        tripDetailService.save(tripDetail);
+    public Result cancelTrip(@RequestBody TripDetail tripDetail) {
+
+        TripDetail pTripDetail = tripDetailService.findById(tripDetail.getpId());
+
+        tripDetailService.update(tripDetail);
+
+        pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()+1);
+        tripDetailService.update(pTripDetail);
+
         return ResultGenerator.genSuccessResult();
     }
 }

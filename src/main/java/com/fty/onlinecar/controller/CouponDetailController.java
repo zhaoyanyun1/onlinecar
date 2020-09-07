@@ -49,8 +49,7 @@ public class CouponDetailController{
         int userIntegral =Integer.parseInt(users.getIntegral());
         int couponMoney =Integer.parseInt(coupon.getMoney());
         if(userIntegral<couponMoney){
-            //Todo 返回积分不足
-            return ResultGenerator.genFailResult();
+            return ResultGenerator.genInsufficientPointsResult();
         }
         couponDetail.setState("1");
         couponDetailService.save(couponDetail);

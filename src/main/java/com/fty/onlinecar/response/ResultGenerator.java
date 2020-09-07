@@ -36,6 +36,24 @@ public class ResultGenerator {
     public static Result genNoTripResult() {
         return new Result(ResultEnum.NO_TRIP);
     }
+    public static Result genRegisterFailResult() {
+        return new Result(ResultEnum.REGISTER_FAIL);
+    }
+    public static Result genBalanceLowResult() {
+        return new Result(ResultEnum.BALANCE_LOW);
+    }
+    public static Result genSeatLowResult() {
+        return new Result(ResultEnum.SEAT_LOW);
+    }
+    public static Result genTripFullResult() {
+        return new Result(ResultEnum.TRIP_FULL);
+    }
+    public static Result genNoDurTripResult() {
+        return new Result(ResultEnum.NO_DURTRIP);
+    }
+    public static Result genInsufficientPointsResult() {
+        return new Result(ResultEnum.INSUFFICIENT_POINTS);
+    }
 
     public static Result genFailResult(Object data) {
         return new Result(ResultEnum.FAIL,data);
