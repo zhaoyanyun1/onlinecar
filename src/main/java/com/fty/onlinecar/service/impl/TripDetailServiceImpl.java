@@ -65,10 +65,10 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     @Override
     public void confirmTrip(TripDetail tripDetail, TripDetail pTripDetail) {
         //成功确认行程
-        tripDetail.setState("1");
+        tripDetail.setState("5");
         tripDetail.setTripsDirection(pTripDetail.getTripsDirection());
         tripDetail.setDriverId(pTripDetail.getDriverId());
-        pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()-tripDetail.getAllSeatNum());
+//        pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()-tripDetail.getAllSeatNum());
         this.update(pTripDetail);
         tripDetail.setDepartureTime(pTripDetail.getDepartureTime());
         this.save(tripDetail);
@@ -92,7 +92,7 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                 Users driver = usersService.findById(tripDetail1.getDriverId());
                 Users passenger = usersService.findById(tripDetail1.getUserId());
                 integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
-                balanceDetailService.lessen(driver,"-"+tripDetail1.getAllSeatNum(),"乘客确认同行");
+                balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum().toString(),"乘客确认同行");
 
             }
 
@@ -109,6 +109,11 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                 }
             }
 
+        }else if(tripDetail.getState().equals("1")){
+            TripDetail pTripDetail = this.findById(tripDetail.getpId());
+            TripDetail newTripDetail = this.findById(tripDetail.getId());
+            pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()-newTripDetail.getAllSeatNum());
+            this.update(pTripDetail);
         }
         this.update(tripDetail);
     }

@@ -13,10 +13,23 @@
     <a class="layui-btn  layui-btn-xs" lay-event="detail">详情</a>
     <a class="layui-btn  layui-btn-xs" lay-event="recharge">充值</a>
     <a class="layui-btn  layui-btn-xs" lay-event="del">删除</a>
+    {{#  if(d.state === '2'){ }}
+    <a class="layui-btn  layui-btn-xs" lay-event="examine">审核</a>
+    {{#  } }}
+
 </script>
 <div id="form" style="display: none">
 
 </div>
+
+<script type="text/html" id="status">
+    {{#  if(d.state === '1'){ }}
+    正常
+    {{#  } }}
+    {{#  if(d.state === '2'){ }}
+    待审核
+    {{#  } }}
+</script>
 
 <script th:src="@{/static/layui/layui.js}"></script>
 <script th:inline="javascript">
@@ -32,7 +45,7 @@
         form.on('submit(recharge)', function (data) {
 
 
-            if(data.field.balance==""){
+            if (data.field.balance == "") {
                 return false;
             }
             $.ajax({
@@ -62,9 +75,10 @@
             , size: 'sm'
             , cols: [[ //表头
                 {field: 'name', title: '姓名', width: '20%', sort: true}
-                , {field: 'sex', title: '性别', width: '20%', sort: true}
+                , {field: 'sex', title: '性别', width: '10%', sort: true}
                 , {field: 'carNum', title: '车牌号', width: '20%', sort: true}
                 , {field: 'idcard', title: '身份证号', width: '20%', sort: true}
+                , {field: 'state', title: '状态', width: '10%', sort: true, templet: '#status'}
                 , {field: 'operation', title: '操作', width: '20%', sort: true, toolbar: '#operation'}
             ]]
         });
@@ -127,6 +141,19 @@
 
                 })
             }
+            if (layEvent === 'examine') {
+                setDetail(data)
+                layer.open({
+                    type: 1
+                    , title: '司机信息详情'
+                    , area: ['500px', '300px']
+                    , content: $('#examine')
+                    , cancel: function () {
+                        userinfos.reload();
+                    }
+
+                })
+            }
         })
 
 
@@ -138,7 +165,10 @@
             $("span[name='age']").text(driver.age ? driver.age : '无数据');
             $("span[name='idcard']").text(driver.idcard ? driver.idcard : '无数据');
             $("span[name='carNum']").text(driver.carNum ? driver.carNum : '无数据');
+            $("input[name='id']").val(driver.id);
+
         }
+
 
         function setRecharge(driver) {
             console.log(driver)
@@ -148,6 +178,34 @@
             $("input[name='curBalance']").val(driver.balance ? driver.balance : 0);
             $("input[name='balance']").val("");
         }
+
+        $("#pass").click(function (e) {
+            var id = $("input[name='id']").val();
+            $.ajax({
+                url: "pass",
+                type: "post",
+                contentType: 'application/x-www-form-urlencoded',
+                data: {"id":id},
+                success: function (data) {
+                    layer.close(layer.index);
+                    layer.msg(data.message);
+                }
+            });
+        })
+
+        $("#no").click(function (e) {
+            var id = $("input[name='id']").val();
+            $.ajax({
+                url: "no",
+                type: "post",
+                contentType: 'application/x-www-form-urlencoded',
+                data: {"id":id},
+                success: function (data) {
+                    layer.close(layer.index);
+                    layer.msg(data.message);
+                }
+            });
+        })
     });
 
 
@@ -163,6 +221,24 @@
     司机车牌号: <span name="carNum"></span><br/>
     司机驾龄: <span name="name"></span><br/>
     司机身份证号: <span name="idcard"></span><br/>
+</div>
+
+<div id="examine" style="display: none">
+
+    司机名称: <span name="name"></span><br/>
+    司机手机号: <span name="phone"></span><br/>
+    司机性别: <span name="sex"></span><br/>
+    司机年龄: <span name="age"></span><br/>
+    司机车牌号: <span name="carNum"></span><br/>
+    司机驾龄: <span name="name"></span><br/>
+    司机身份证号: <span name="idcard"></span><br/>
+    <input name="id" value="" type="hidden"/>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" id="pass">审核通过</button>
+            <button class="layui-btn" id="no">审核拒绝</button>
+        </div>
+    </div>
 </div>
 
 

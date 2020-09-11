@@ -172,12 +172,16 @@ public class TripDetailController{
         @PostMapping(value="/cancelTrip",name="TripDetail修改")
     @ResponseBody
     public Result cancelTrip(@RequestBody TripDetail tripDetail) {
+        TripDetail oldTrip = tripDetailService.findById(tripDetail.getId());
 
         TripDetail pTripDetail = tripDetailService.findById(tripDetail.getpId());
 
         tripDetailService.update(tripDetail);
 
-        pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()+1);
+        if(oldTrip.getState().equals("1")){
+            pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()+oldTrip.getAllSeatNum());
+        }
+
         tripDetailService.update(pTripDetail);
 
         return ResultGenerator.genSuccessResult();

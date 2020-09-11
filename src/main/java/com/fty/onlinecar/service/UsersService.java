@@ -11,4 +11,5 @@ import java.util.Map;
  */
 public interface UsersService extends Service<Users> {
    List<Map<String, Object>> list(String search, String order, Integer page, Integer size);
+   Users addPassenger(Users users);
 }

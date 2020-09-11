@@ -32,44 +32,43 @@ public class UsersController {
 
 
 
-    @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
-    @PostMapping(value = "/addDriver", name = "Drivers添加")
+    @ApiOperation(value = "司机添加", tags = {"Drivers"}, notes = "司机添加")
+    @PostMapping(value = "/addDriver", name = "司机添加")
     @ResponseBody
     public Result addDriver(@RequestBody Users users) {
-        users.setInvitationCode(users.getPhone());
-        users.setType(1);
-        users.setPassword("123456");
-        usersService.save(users);
-        return ResultGenerator.genSuccessResult();
+        Users users1 = usersService.findBy("phone",users.getPhone());
+        if(users1 == null){
+            users.setInvitationCode(users.getPhone());
+            users.setType(1);
+            usersService.save(users);
+            return ResultGenerator.genSuccessResult();
+        }else {
+            if(users1.getState().equals("1")){
+                return ResultGenerator.genFailResult(ResultEnum.PHONE_HAVE);
+            }else if(users1.getState().equals("2")){
+                return ResultGenerator.genFailResult(ResultEnum.UNDER_EVIEW);
+            }else if(users1.getState().equals("3")){
+                users.setId(users1.getId());
+                usersService.update(users);
+                return ResultGenerator.genSuccessResult();
+            }
+
+            return ResultGenerator.genFailResult();
+        }
+
     }
 
 
 
-    @ApiOperation(value = "Drivers添加", tags = {"Drivers"}, notes = "Drivers添加")
-    @PostMapping(value = "/addPassenger", name = "Drivers添加")
+    @ApiOperation(value = "乘客添加", tags = {"Drivers"}, notes = "乘客添加")
+    @PostMapping(value = "/addPassenger", name = "乘客添加")
     @ResponseBody
     public Result addPassenger(@RequestBody Users users) {
 
-        Users users1 = usersService.findBy("phone",users.getPhone());
-        if(users1 != null ){
-            return ResultGenerator.genRegisterFailResult();
-        }
+        usersService.addPassenger(users);
 
-        users.setInvitationCode(users.getPhone());
 
-        //判读用户是否填了邀请码，邀请人是否存在
-        if(users.getInvitees()!=null){
-            Users invitees = usersService.findBy("invitationCode",users.getInvitees());
-            if(invitees == null){
-                return ResultGenerator.genFailResult();
-            }
 
-            integralDetailService.addIntegral(invitees,1,"邀请用户");
-
-        }
-        users.setState("1");
-        users.setType(2);
-        usersService.save(users);
         return ResultGenerator.genSuccessResult();
     }
 
@@ -136,6 +135,26 @@ public class UsersController {
         return ResultGenerator.genSuccessResult();
     }
 
+
+    @ApiOperation(value = "审核通过", tags = {"Users"}, notes = "Users修改,对象主键必填")
+    @PostMapping(value = "/pass", name = "审核通过")
+    @ResponseBody
+    public Result pass(@RequestParam("id") Integer id) {
+        Users users1 = usersService.findById(id);
+        users1.setState("1");
+        usersService.update(users1);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @ApiOperation(value = "审核拒绝", tags = {"Users"}, notes = "Users修改,对象主键必填")
+    @PostMapping(value = "/no", name = "审核拒绝")
+    @ResponseBody
+    public Result no(@RequestParam("id") Integer id) {
+        Users users1 = usersService.findById(id);
+        users1.setState("3");
+        usersService.update(users1);
+        return ResultGenerator.genSuccessResult();
+    }
 
 
 

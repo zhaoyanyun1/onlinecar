@@ -34,4 +34,14 @@ public class UsersServiceImpl extends AbstractService<Users> implements UsersSer
         List<Map<String, Object>> res = usersMapper.list(params, orderParams);
         return res;
     }
+
+    @Override
+    public Users addPassenger(Users users) {
+
+        users.setInvitationCode(users.getPhone());
+        users.setState("1");
+        users.setType(2);
+        this.save(users);
+        return users;
+    }
 }
