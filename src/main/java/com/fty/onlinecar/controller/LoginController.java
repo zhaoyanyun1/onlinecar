@@ -88,4 +88,27 @@ public class LoginController {
         return ResultGenerator.genSuccessResult(jsonObject);
 
     }
+
+    @PostMapping(value = "/getAccessToken", name = "获取登录信息")
+    @ResponseBody
+    public Result getAccessToken(){
+        String appid ="wx987e5963be72e738";
+        String secret = "48ee2fe9bbf33430df9635533a7a50a4";
+        String res= HttpUtil.get("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appid+"&secret="+secret);
+        JSONObject jsonObject = JSONObject.parseObject(res);
+        return ResultGenerator.genSuccessResult(jsonObject);
+
+    }
+
+
+
+    @PostMapping(value = "/getQrcode", name = "获取登录信息")
+    @ResponseBody
+    public Result getQrcode(@RequestParam("access_token") String access_token,@RequestParam("userId") String userId){
+
+
+        String res = WechatUtil.post(access_token,userId);
+        return ResultGenerator.genSuccessResult(res);
+
+    }
 }

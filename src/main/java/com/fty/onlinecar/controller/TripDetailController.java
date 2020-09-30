@@ -76,6 +76,11 @@ public class TripDetailController{
         return ResultGenerator.genSuccessResult();
     }
 
+
+
+
+
+
     @ApiOperation(value = "TripDetail删除", tags = {"TripDetail"}, notes = "TripDetail删除")
     @ApiImplicitParams({
         @ApiImplicitParam(name = "id",required=true, value = "TripDetailid", dataType = "Long", paramType = "query")
@@ -86,15 +91,29 @@ public class TripDetailController{
         return ResultGenerator.genSuccessResult();
     }
 
+
+
+
+
+
     @ApiOperation(value = "TripDetail修改", tags = {"TripDetail"}, notes = "TripDetail修改,对象主键必填")
     @PostMapping(value="/update",name="TripDetail修改")
     @ResponseBody
     public Result update(@RequestBody TripDetail tripDetail) {
 
-        tripDetailService.updateTripState(tripDetail);
 
-        return ResultGenerator.genSuccessResult();
+
+        return tripDetailService.updateTripState(tripDetail);
     }
+
+
+
+
+
+
+
+
+
 
     @ApiOperation(value = "TripDetail详细信息", tags = {"TripDetail"}, notes = "TripDetail详细信息")
     @ApiImplicitParams({
@@ -106,6 +125,15 @@ public class TripDetailController{
         Map<String,Object> tripDetail = tripDetailService.getById(id);
         return ResultGenerator.genSuccessResult(tripDetail);
     }
+
+
+
+
+
+
+
+
+
 
     @ApiOperation(value = "TripDetail列表信息", tags = {"TripDetail"}, notes = "TripDetail列表信息")
     @ApiImplicitParams({
@@ -123,11 +151,23 @@ public class TripDetailController{
     }
 
 
+
+
+
+
+
+
     @PostMapping(value = "/driverTriplist", name = "TripDetail列表信息")
     public Result driverTriplist(@RequestBody String search) {
         List<Map<String,Object>> list = tripDetailService.driverTriplist(search);
         return ResultGenerator.genSuccessResult(list);
     }
+
+
+
+
+
+
 
     @PostMapping(value="/findCurTripByDriver",name="查询司机当前行程")
     @ResponseBody
@@ -139,6 +179,12 @@ public class TripDetailController{
         }
         return ResultGenerator.genSuccessResult(tripDetail);
     }
+
+
+
+
+
+
 
     @PostMapping(value="/findCurTripByPassenger",name="查询乘客当前行程")
     @ResponseBody
@@ -152,6 +198,11 @@ public class TripDetailController{
     }
 
 
+
+
+
+
+
     /**
      * 司机查看同行乘客
      * @return
@@ -163,6 +214,13 @@ public class TripDetailController{
         List<Map<String, Object>> list = tripDetailService.findPeersPassenger(tripId);
         return list;
     }
+
+
+
+
+
+
+
 
     /**
      * 取消行程

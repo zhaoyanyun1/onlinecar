@@ -5,6 +5,7 @@ import com.fty.onlinecar.entity.CouponDetail;
 import com.fty.onlinecar.entity.IntegralDetail;
 import com.fty.onlinecar.entity.TripDetail;
 import com.fty.onlinecar.entity.Users;
+import com.fty.onlinecar.response.ResultEnum;
 import com.fty.onlinecar.service.*;
 import com.fty.onlinecar.base.service.AbstractService;
 import org.springframework.stereotype.Service;
@@ -78,21 +79,25 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     }
 
     @Override
-    public void updateTripState(TripDetail tripDetail) {
+    public Result updateTripState(TripDetail tripDetail) {
         List<Map<String, Object>> list = this.findPeersPassenger(tripDetail.getId());
         if(tripDetail.getState().equals("3")){
             for (Map<String, Object> map: list) {
                 TripDetail tripDetail1 = this.findById(map.get("id"));
+
+
+
+                if(!tripDetail1.getState().equals("4")){
+                    //Todo 积分计算
+                    Users driver = usersService.findById(tripDetail1.getDriverId());
+                    Users passenger = usersService.findById(tripDetail1.getUserId());
+                    integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
+                    balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum().toString(),"乘客确认同行");
+                }
+
+
                 tripDetail1.setState("3");
                 this.update(tripDetail1);
-
-
-
-                //Todo 积分计算
-                Users driver = usersService.findById(tripDetail1.getDriverId());
-                Users passenger = usersService.findById(tripDetail1.getUserId());
-                integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
-                balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum().toString(),"乘客确认同行");
 
             }
 
@@ -107,15 +112,21 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                     couponDetail.setTripId(String.valueOf(tripDetail.getId()));
                     couponDetailService.update(couponDetail);
                 }
+                tripDetail1.setState("2");
+                this.update(tripDetail1);
             }
 
         }else if(tripDetail.getState().equals("1")){
             TripDetail pTripDetail = this.findById(tripDetail.getpId());
             TripDetail newTripDetail = this.findById(tripDetail.getId());
+            if(pTripDetail.getSurplusSeatNum() < newTripDetail.getAllSeatNum()){
+                return ResultGenerator.genSeatLowResult();
+            }
             pTripDetail.setSurplusSeatNum(pTripDetail.getSurplusSeatNum()-newTripDetail.getAllSeatNum());
             this.update(pTripDetail);
         }
         this.update(tripDetail);
+        return ResultGenerator.genSuccessResult();
     }
 
     @Override

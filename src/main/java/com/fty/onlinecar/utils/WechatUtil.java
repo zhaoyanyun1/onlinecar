@@ -1,11 +1,18 @@
 package com.fty.onlinecar.utils;
 
 import cn.hutool.core.codec.Base64;
+import com.alibaba.fastjson.JSONObject;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.security.Key;
 import java.security.Security;
 import java.util.Arrays;
@@ -67,5 +74,83 @@ public class WechatUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static String post(String token,String scene){
+
+        try {
+            PrintWriter out = null;
+            InputStream in = null;
+            String result = "";
+            try {
+                URL realUrl = new URL("https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token="+token);
+                // 打开和URL之间的连接
+                URLConnection conn = realUrl.openConnection();
+                // 设置通用的请求属性
+                conn.setRequestProperty("accept", "*/*");
+                conn.setRequestProperty("connection", "Keep-Alive");
+                conn.setRequestProperty("user-agent",
+                        "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+                // 发送POST请求必须设置如下两行
+                conn.setDoOutput(true);
+                conn.setDoInput(true);
+                // 获取URLConnection对象对应的输出流
+                out = new PrintWriter(conn.getOutputStream());
+                // 发送请求参数
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("scene", scene); //参数自定义
+//                jsonObject.put("page","pages/main/main");//要生成小程序码的链接
+                jsonObject.put("width",300);
+                out.print(jsonObject);
+                // flush输出流的缓冲
+                out.flush();
+                in = conn.getInputStream();
+                byte[] data = null;
+                // 读取图片字节数组
+                try {
+                    ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+                    byte[] buff = new byte[100];
+                    int rc = 0;
+                    while ((rc = in.read(buff, 0, 100)) > 0) {
+                        swapStream.write(buff, 0, rc);
+                    }
+                    data = swapStream.toByteArray();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                return new String(org.apache.tomcat.util.codec.binary.Base64.encodeBase64(data));
+            } catch (Exception e) {
+                System.out.println("发送 POST 请求出现异常！" + e);
+                e.printStackTrace();
+            }
+            // 使用finally块来关闭输出流、输入流
+            finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                    if (in != null) {
+                        in.close();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+//            resultObj.put("result",result);
+            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 }
