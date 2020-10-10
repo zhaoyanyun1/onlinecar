@@ -12,7 +12,7 @@ import java.util.Map;
 public interface TripDetailMapper extends BaseDao<TripDetail> {
     List<Map<String,Object>> driverTriplist(@Param("params") Map<String, Object> params);
 
-    TripDetail findCurTripByDriver(@Param("params") Map<String,Object> params);
+    List<TripDetail> findCurTripByDriver(@Param("params") Map<String,Object> params);
     Map<String,Object> findCurTripByPassenger(@Param("params") Map<String,Object> params);
 
     List<Map<String, Object>> findPeersPassenger(Integer tripId);

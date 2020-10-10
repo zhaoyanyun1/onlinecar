@@ -1,6 +1,7 @@
 package com.fty.onlinecar.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "coupon_detail")
@@ -10,24 +11,24 @@ public class CouponDetail implements Serializable {
     private Integer id;
 
     @Column(name = "user_id")
-    private String userId;
+    private Integer userId;
 
     @Column(name = "user_type")
     private String userType;
 
     @Column(name = "coupon_id")
-    private String couponId;
+    private Integer couponId;
 
     @Column(name = "trip_id")
-    private String tripId;
+    private Integer tripId;
 
     private String state;
 
     @Column(name = "create_time")
-    private String createTime;
+    private Date createTime;
 
     @Column(name = "update_time")
-    private String updateTime;
+    private Date updateTime;
 
     private static final long serialVersionUID = 1L;
 
@@ -48,14 +49,14 @@ public class CouponDetail implements Serializable {
     /**
      * @return user_id
      */
-    public String getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
     /**
      * @param userId
      */
-    public void setUserId(String userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
@@ -76,28 +77,28 @@ public class CouponDetail implements Serializable {
     /**
      * @return coupon_id
      */
-    public String getCouponId() {
+    public Integer getCouponId() {
         return couponId;
     }
 
     /**
      * @param couponId
      */
-    public void setCouponId(String couponId) {
+    public void setCouponId(Integer couponId) {
         this.couponId = couponId;
     }
 
     /**
      * @return trip_id
      */
-    public String getTripId() {
+    public Integer getTripId() {
         return tripId;
     }
 
     /**
      * @param tripId
      */
-    public void setTripId(String tripId) {
+    public void setTripId(Integer tripId) {
         this.tripId = tripId;
     }
 
@@ -118,28 +119,28 @@ public class CouponDetail implements Serializable {
     /**
      * @return create_time
      */
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
     /**
      * @param createTime
      */
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
     /**
      * @return update_time
      */
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
     /**
      * @param updateTime
      */
-    public void setUpdateTime(String updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 }

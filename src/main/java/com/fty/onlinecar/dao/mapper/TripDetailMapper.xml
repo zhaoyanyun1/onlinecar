@@ -25,24 +25,27 @@
         where 1=1
         and td.state != 3
         and td.p_id is null
-        and to_days(td.create_time) = to_days(now())
+        and to_days(td.departure_time) >= to_days(now())
         <if test="params.times!=null and params.times!=''">
             and td.departure_time = #{params.times}
         </if>
         <if test="params.tripsDirection!=null and params.tripsDirection !=''">
             and td.trips_direction = #{params.tripsDirection}
         </if>
-        order by u.integral desc
+        order by td.departure_time asc,u.integral desc
     </select>
 
     <select id="findCurTripByDriver" resultMap="BaseResultMap">
 
         select * from trip_detail
           where 1=1
+          <if test="params.id != null and params.id !=''">
+              and id = #{params.id}
+          </if>
           and state!=3
           and driver_id = #{params.driverId}
           and p_id is null
-          and to_days(create_time) = to_days(now());
+          and to_days(departure_time) >= to_days(now());
     </select>
 
     <select id="findPeersPassenger" resultType="com.fty.onlinecar.base.ResultMap">

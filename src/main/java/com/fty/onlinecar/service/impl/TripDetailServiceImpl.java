@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -93,27 +94,44 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                     Users passenger = usersService.findById(tripDetail1.getUserId());
                     integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
                     balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum().toString(),"乘客确认同行");
+
+                    tripDetail1.setState("3");
+                    this.update(tripDetail1);
                 }
 
 
-                tripDetail1.setState("3");
-                this.update(tripDetail1);
+
 
             }
 
         }else if(tripDetail.getState().equals("2")){
             for (Map<String, Object> map: list) {
+
                 TripDetail tripDetail1 = this.findById(map.get("id"));
-                //查询乘客可用优惠券
-                List<Map<String, Object>> couponlist = couponDetailService.findAvailableByUserId(tripDetail1.getUserId());
-                if(couponlist !=null && couponlist.size()>0){
-                    CouponDetail couponDetail = couponDetailService.findById(couponlist.get(0).get("id"));
-                    couponDetail.setState("2");
-                    couponDetail.setTripId(String.valueOf(tripDetail.getId()));
-                    couponDetailService.update(couponDetail);
+                if(!tripDetail1.getState().equals("4")){
+
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("tripId",tripDetail1.getId());
+                    params.put("state","2");
+                    params.put("userId",tripDetail1.getUserId());
+                    List<Map<String, Object>> couponDetails = couponDetailService.passengerCouponlist(params);
+                    if(!couponDetails.isEmpty()){
+                        if(couponDetails.size()>1){
+
+                        }else{
+                            CouponDetail couponDetail =couponDetailService.findById(couponDetails.get(0).get("id"));
+
+                            couponDetail.setState("3");
+                            couponDetail.setUpdateTime(new Date());
+                            couponDetailService.update(couponDetail);
+                        }
+                    }
+
+
+                    tripDetail1.setState("2");
+                    this.update(tripDetail1);
                 }
-                tripDetail1.setState("2");
-                this.update(tripDetail1);
+
             }
 
         }else if(tripDetail.getState().equals("1")){
@@ -130,7 +148,7 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     }
 
     @Override
-    public TripDetail findCurTripByDriver(Map<String,Object> params) {
+    public List<TripDetail> findCurTripByDriver(Map<String,Object> params) {
         return tripDetailMapper.findCurTripByDriver(params);
     }
 

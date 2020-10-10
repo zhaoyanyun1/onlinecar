@@ -17,7 +17,7 @@ public interface TripDetailService extends Service<TripDetail> {
    void confirmTrip(TripDetail tripDetail,TripDetail pTripDetail);
    Result updateTripState(TripDetail tripDetail);
 
-   TripDetail findCurTripByDriver(Map<String,Object> params);
+   List<TripDetail> findCurTripByDriver(Map<String,Object> params);
    Map<String,Object> findCurTripByPassenger(Map<String,Object> params);
 
    List<Map<String, Object>> findPeersPassenger(Integer tripId);

@@ -1,9 +1,10 @@
 package com.fty.onlinecar.controller;
 
-import com.fty.onlinecar.entity.TripDetail;
-import com.fty.onlinecar.entity.Users;
+import cn.hutool.core.date.DateUtil;
+import com.fty.onlinecar.entity.*;
 import com.fty.onlinecar.response.Result;
 import com.fty.onlinecar.response.ResultGenerator;
+import com.fty.onlinecar.service.CouponDetailService;
 import com.fty.onlinecar.service.TripDetailService;
 import com.fty.onlinecar.service.UsersService;
 import com.fty.onlinecar.utils.JSONUtils;
@@ -14,6 +15,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,12 +35,15 @@ public class TripDetailController{
     private TripDetailService tripDetailService;
     @Resource
     private UsersService usersService;
+    @Resource
+    private CouponDetailService couponDetailService;
 
 
     @ApiOperation(value = "TripDetail添加", tags = {"TripDetail"}, notes = "TripDetail添加")
     @PostMapping(value="/add",name="TripDetail添加")
     @ResponseBody
-    public Result add(@RequestBody TripDetail tripDetail) {
+    public Result add(@RequestBody TripDetailAndCoupon tripDetailAndCoupon) {
+        TripDetail tripDetail = tripDetailAndCoupon.getTripDetail();
         if(tripDetail.getpId()!=null && !tripDetail.getpId().equals("")){
             TripDetail pTripDetail = tripDetailService.findById(tripDetail.getpId());
             if(pTripDetail == null){
@@ -53,7 +61,13 @@ public class TripDetailController{
 
             tripDetailService.confirmTrip(tripDetail,pTripDetail);
 
-
+            CouponDetail couponDetail = tripDetailAndCoupon.getCoupon();
+            if(null!=couponDetail && null!=couponDetail.getId()){
+                couponDetail.setState("2");
+                couponDetail.setTripId(tripDetail.getId());
+                couponDetail.setUpdateTime(new Date());
+                couponDetailService.update(couponDetail);
+            }
         }else{
             Users users = usersService.findById(tripDetail.getDriverId());
             if(users ==null){
@@ -70,8 +84,40 @@ public class TripDetailController{
 
             //Todo 判断司机当天有没有发布行程
 
-            tripDetail.setSurplusSeatNum(tripDetail.getAllSeatNum());
-            tripDetailService.save(tripDetail);
+
+            String isReturn = tripDetailAndCoupon.getIsReturn();
+            if(isReturn.equals("no")){
+                String [] dates = tripDetailAndCoupon.getDates();
+                for(int i=0;i<dates.length;i++){
+                    TripDetail newTrip = new TripDetail();
+                    newTrip.setTripsDirection(tripDetail.getTripsDirection());
+                    newTrip.setAllSeatNum(tripDetail.getAllSeatNum());
+                    newTrip.setState(tripDetail.getState());
+                    newTrip.setDriverId(tripDetail.getDriverId());
+                    newTrip.setSurplusSeatNum(tripDetail.getAllSeatNum());
+                    newTrip.setDepartureTime(dates[i]+" "+tripDetail.getDepartureTime());
+                    tripDetailService.save(newTrip);
+                }
+            }else{
+                String [] dates = tripDetailAndCoupon.getDates();
+                tripDetail.setSurplusSeatNum(tripDetail.getAllSeatNum());
+                tripDetail.setDepartureTime(dates[0]+" "+tripDetail.getDepartureTime());
+                tripDetailService.save(tripDetail);
+
+
+                String returnTime = tripDetailAndCoupon.getReturnTime();
+                TripDetail returnTrip = new TripDetail();
+                returnTrip.setAllSeatNum(tripDetail.getAllSeatNum());
+                returnTrip.setDepartureTime(dates[0]+" "+returnTime);
+                returnTrip.setDriverId(tripDetail.getDriverId());
+                returnTrip.setState(tripDetail.getState());
+                String [] reTripsDirections = tripDetail.getTripsDirection().split("-");
+                String reTripsDirection = reTripsDirections[1]+"-"+reTripsDirections[0];
+                returnTrip.setTripsDirection(reTripsDirection);
+                returnTrip.setSurplusSeatNum(returnTrip.getAllSeatNum());
+                tripDetailService.save(returnTrip);
+
+            }
         }
         return ResultGenerator.genSuccessResult();
     }
@@ -160,6 +206,14 @@ public class TripDetailController{
     @PostMapping(value = "/driverTriplist", name = "TripDetail列表信息")
     public Result driverTriplist(@RequestBody String search) {
         List<Map<String,Object>> list = tripDetailService.driverTriplist(search);
+        for (Map<String,Object> map:list ) {
+            String name = map.get("name").toString();
+            map.put("showName",name.substring(0,1)+"师傅");
+            String phone = map.get("phone").toString();
+            String phone1 = phone.substring(0,3);
+            String phone2 = phone.substring(7,11);
+            map.put("showPhone",phone1+"****"+phone2);
+        }
         return ResultGenerator.genSuccessResult(list);
     }
 
@@ -173,11 +227,41 @@ public class TripDetailController{
     @ResponseBody
     public Result findCurTripByDriver(@RequestBody String search) {
         Map<String, Object> params = JSONUtils.json2map(search);
-        TripDetail tripDetail = tripDetailService.findCurTripByDriver(params);
-        if(tripDetail ==null){
+        List<TripDetail> tripDetail = tripDetailService.findCurTripByDriver(params);
+        if(tripDetail.isEmpty()){
             return ResultGenerator.genNoTripResult();
         }
+        if(params.get("id")!=null && !params.get("id").equals("")){
+            return ResultGenerator.genSuccessResult(tripDetail.get(0));
+        }
         return ResultGenerator.genSuccessResult(tripDetail);
+    }
+
+    @PostMapping(value="/findDriverCanPush",name="查询司机能否发布行程")
+    @ResponseBody
+    public Result findDriverCanPush(@RequestBody String search) {
+        Map<String, Object> params = JSONUtils.json2map(search);
+        List<TripDetail> tripDetails = tripDetailService.findCurTripByDriver(params);
+        if(tripDetails.isEmpty()){
+            return ResultGenerator.genNoTripResult();
+        }
+        for (TripDetail tripDetail:tripDetails) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
+            try {
+                Date departureTime = simpleDateFormat.parse(tripDetail.getDepartureTime());
+                String newDateStr = DateUtil.format(new Date(),"yyyy-MM-dd");
+                Date newDate = simpleDateFormat.parse(newDateStr);
+                int compareTo = newDate.compareTo(departureTime);
+                if(compareTo==0){
+                    return ResultGenerator.genSuccessResult();
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return ResultGenerator.genNoTripResult();
+
     }
 
 
@@ -241,6 +325,24 @@ public class TripDetailController{
         }
 
         tripDetailService.update(pTripDetail);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("tripId",oldTrip.getId());
+        params.put("state","2");
+        params.put("userId",oldTrip.getUserId());
+        List<Map<String, Object>> couponDetails = couponDetailService.passengerCouponlist(params);
+        if(!couponDetails.isEmpty()){
+            if(couponDetails.size()>1){
+
+            }else{
+                CouponDetail couponDetail =couponDetailService.findById(couponDetails.get(0).get("id"));
+
+                couponDetail.setTripId(null);
+                couponDetail.setState("1");
+                couponDetail.setUpdateTime(new Date());
+                couponDetailService.update(couponDetail);
+            }
+        }
 
         return ResultGenerator.genSuccessResult();
     }
