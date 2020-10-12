@@ -1,10 +1,8 @@
 package com.fty.onlinecar.service.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.fty.onlinecar.dao.TripDetailMapper;
-import com.fty.onlinecar.entity.CouponDetail;
-import com.fty.onlinecar.entity.IntegralDetail;
-import com.fty.onlinecar.entity.TripDetail;
-import com.fty.onlinecar.entity.Users;
+import com.fty.onlinecar.entity.*;
 import com.fty.onlinecar.response.ResultEnum;
 import com.fty.onlinecar.service.*;
 import com.fty.onlinecar.base.service.AbstractService;
@@ -42,6 +40,9 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
 
     @Resource
     private CouponDetailService couponDetailService;
+    @Resource
+    private CouponService couponService;
+
 
     @Override
     public Result list(String search, String order, Integer page, Integer size){
@@ -60,6 +61,26 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     @Override
     public List<Map<String, Object>> driverTriplist(String search) {
         Map<String, Object> params = JSONUtils.json2map(search);
+
+        String times = "";
+        if(null !=params.get("date") && !params.get("date").equals("")){
+            times = params.get("date").toString();
+            if(null !=params.get("times") && !params.get("times").equals("")){
+                times = times+" "+params.get("times").toString();
+            }else {
+                times = times+" 00:00:00";
+            }
+        }else{
+            String newDate = DateUtil.format(new Date(),"yyyy-MM-dd");
+            if(null !=params.get("times") && !params.get("times").equals("")){
+                times = newDate+" "+params.get("times").toString();
+            }else {
+
+            }
+        }
+
+        params.put("times",times);
+
         List<Map<String, Object>> res = tripDetailMapper.driverTriplist(params);
         return res;
     }
@@ -124,6 +145,13 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                             couponDetail.setState("3");
                             couponDetail.setUpdateTime(new Date());
                             couponDetailService.update(couponDetail);
+
+                            Users driver = usersService.findById(tripDetail1.getDriverId());
+                            Coupon coupon = couponService.findById(couponDetail.getCouponId());
+                            String balance = driver.getBalance();
+                            balance = String.valueOf(Integer.parseInt(balance)+Integer.parseInt(coupon.getMoney()));
+                            driver.setBalance(balance);
+                            usersService.update(driver);
                         }
                     }
 

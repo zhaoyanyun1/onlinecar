@@ -289,7 +289,7 @@ public class TripDetailController{
 
     /**
      * 司机查看同行乘客
-     * @return
+     * @returndriverTriplist
      */
     @PostMapping(value = "/findPeersPassenger", name = "Users列表信息")
     @ResponseBody
