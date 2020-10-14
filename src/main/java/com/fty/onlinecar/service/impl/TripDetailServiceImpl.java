@@ -109,7 +109,7 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
 
 
 
-                if(!tripDetail1.getState().equals("4")){
+                if(!tripDetail1.getState().equals("4") && !tripDetail1.getState().equals("6") && !tripDetail1.getState().equals("7")){
                     //Todo 积分计算
                     Users driver = usersService.findById(tripDetail1.getDriverId());
                     Users passenger = usersService.findById(tripDetail1.getUserId());
