@@ -16,5 +16,6 @@ public interface TripDetailMapper extends BaseDao<TripDetail> {
     Map<String,Object> findCurTripByPassenger(@Param("params") Map<String,Object> params);
 
     List<Map<String, Object>> findPeersPassenger(Integer tripId);
+    List<Map<String, Object>> findHistory(@Param("params") Map<String, Object> params);
     Map<String, Object> getById(String id);
 }

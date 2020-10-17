@@ -109,7 +109,7 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
 
 
 
-                if(!tripDetail1.getState().equals("4") && !tripDetail1.getState().equals("6") && !tripDetail1.getState().equals("7")){
+                if(!tripDetail1.getState().equals("4") && !tripDetail1.getState().equals("5") && !tripDetail1.getState().equals("6") && !tripDetail1.getState().equals("7")){
                     //Todo 积分计算
                     Users driver = usersService.findById(tripDetail1.getDriverId());
                     Users passenger = usersService.findById(tripDetail1.getUserId());
@@ -129,7 +129,7 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
             for (Map<String, Object> map: list) {
 
                 TripDetail tripDetail1 = this.findById(map.get("id"));
-                if(!tripDetail1.getState().equals("4")){
+                if(!tripDetail1.getState().equals("4") && !tripDetail1.getState().equals("5") && !tripDetail1.getState().equals("6") && !tripDetail1.getState().equals("7")){
 
                     Map<String, Object> params = new HashMap<>();
                     params.put("tripId",tripDetail1.getId());
@@ -188,6 +188,11 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
     @Override
     public List<Map<String, Object>> findPeersPassenger(Integer tripId) {
         return tripDetailMapper.findPeersPassenger(tripId);
+    }
+
+    @Override
+    public List<Map<String, Object>> findHistory(Map<String, Object> params) {
+        return tripDetailMapper.findHistory(params);
     }
 
     @Override

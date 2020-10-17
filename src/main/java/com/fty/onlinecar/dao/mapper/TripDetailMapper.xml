@@ -62,6 +62,23 @@
         and  td.p_id = #{tripId}
     </select>
 
+
+    <select id="findHistory" resultType="com.fty.onlinecar.base.ResultMap">
+
+        select * from trip_detail td
+        where 1=1
+
+
+        <if test="params.userId != null and params.userId !=''">
+            and td.user_id = #{params.userId}
+        </if>
+        <if test="params.driverId != null and params.driverId !=''">
+            and td.driver_id = #{params.driverId}
+            and (td.user_id is null or td.user_id = '')
+        </if>
+        order by td.create_time desc
+    </select>
+
     <select id="findCurTripByPassenger" resultType="com.fty.onlinecar.base.ResultMap">
 
     select td.*,d.name as driverName,d.phone as driverPhone,cd.coupon_id,c.name as couponName,c.money from trip_detail td

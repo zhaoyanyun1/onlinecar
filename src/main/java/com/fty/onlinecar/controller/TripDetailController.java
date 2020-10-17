@@ -5,6 +5,7 @@ import com.fty.onlinecar.entity.*;
 import com.fty.onlinecar.response.Result;
 import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.service.CouponDetailService;
+import com.fty.onlinecar.service.CouponService;
 import com.fty.onlinecar.service.TripDetailService;
 import com.fty.onlinecar.service.UsersService;
 import com.fty.onlinecar.utils.JSONUtils;
@@ -38,6 +39,8 @@ public class TripDetailController{
     @Resource
     private CouponDetailService couponDetailService;
 
+    @Resource
+    private CouponService couponService;
 
     @ApiOperation(value = "TripDetail添加", tags = {"TripDetail"}, notes = "TripDetail添加")
     @PostMapping(value="/add",name="TripDetail添加")
@@ -346,4 +349,35 @@ public class TripDetailController{
 
         return ResultGenerator.genSuccessResult();
     }
+
+    /**
+     * 历史行程
+     */
+    @PostMapping(value = "/findHistory", name = "Users列表信息")
+    @ResponseBody
+    public List<Map<String, Object>> findHistory(@RequestBody String search) {
+        Map<String, Object> params = JSONUtils.json2map(search);
+        List<Map<String, Object>> list = tripDetailService.findHistory(params);
+        for (Map<String, Object> map: list) {
+
+            String departureTime = map.get("departureTime").toString();
+            String[] departureTimes = departureTime.split(" ");
+            String departureDate = departureTimes[0];
+            Date date = DateUtil.parse(departureDate,"yyyy-MM-dd");
+            departureDate = DateUtil.format(date,"yyyyMMdd");
+            map.put("departureDate",departureDate);
+
+
+            if(map.get("userId") !=null && !map.get("userId").equals("")){
+                CouponDetail couponDetail = couponDetailService.findBy("tripId",map.get("id"));
+                if(couponDetail!=null){
+                    Coupon coupon = couponService.findById(couponDetail.getCouponId());
+                    map.put("couponName",coupon.getName());
+                }
+
+            }
+        }
+         return list;
+    }
+
 }

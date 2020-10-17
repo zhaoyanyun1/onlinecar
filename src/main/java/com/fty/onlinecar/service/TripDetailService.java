@@ -21,6 +21,7 @@ public interface TripDetailService extends Service<TripDetail> {
    Map<String,Object> findCurTripByPassenger(Map<String,Object> params);
 
    List<Map<String, Object>> findPeersPassenger(Integer tripId);
+   List<Map<String, Object>> findHistory(Map<String, Object> params);
 
    Map<String, Object> getById(String id);
 
