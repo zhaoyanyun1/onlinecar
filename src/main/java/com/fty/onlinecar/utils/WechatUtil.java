@@ -100,7 +100,7 @@ public class WechatUtil {
                 // 发送请求参数
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("scene", scene); //参数自定义
-                jsonObject.put("page","pages/main/main");//要生成小程序码的链接，生产使用
+                jsonObject.put("page","pages/login/login");//要生成小程序码的链接，生产使用
                 jsonObject.put("width",300);
                 out.print(jsonObject);
                 // flush输出流的缓冲

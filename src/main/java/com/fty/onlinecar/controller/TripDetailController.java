@@ -240,6 +240,12 @@ public class TripDetailController{
         return ResultGenerator.genSuccessResult(tripDetail);
     }
 
+
+    /**
+     * 查询司机能否发布行程
+     * @param search
+     * @return
+     */
     @PostMapping(value="/findDriverCanPush",name="查询司机能否发布行程")
     @ResponseBody
     public Result findDriverCanPush(@RequestBody String search) {
@@ -248,21 +254,26 @@ public class TripDetailController{
         if(tripDetails.isEmpty()){
             return ResultGenerator.genNoTripResult();
         }
-        for (TripDetail tripDetail:tripDetails) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
-            try {
-                Date departureTime = simpleDateFormat.parse(tripDetail.getDepartureTime());
-                String newDateStr = DateUtil.format(new Date(),"yyyy-MM-dd");
-                Date newDate = simpleDateFormat.parse(newDateStr);
-                int compareTo = newDate.compareTo(departureTime);
-                if(compareTo==0){
-                    return ResultGenerator.genSuccessResult();
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
 
+        //阳泉特殊要求，最多能发4条行程，多了不行，少了可以
+        if(tripDetails.size()>=4){
+            return ResultGenerator.genSuccessResult();
         }
+//        for (TripDetail tripDetail:tripDetails) {
+//            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");//注意月份是MM
+//            try {
+//                Date departureTime = simpleDateFormat.parse(tripDetail.getDepartureTime());
+//                String newDateStr = DateUtil.format(new Date(),"yyyy-MM-dd");
+//                Date newDate = simpleDateFormat.parse(newDateStr);
+//                int compareTo = newDate.compareTo(departureTime);
+//                if(compareTo==0){
+//                    return ResultGenerator.genSuccessResult();
+//                }
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
         return ResultGenerator.genNoTripResult();
 
     }

@@ -9,6 +9,7 @@ import com.fty.onlinecar.response.Result;
 import com.fty.onlinecar.response.ResultEnum;
 import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.service.AccountService;
+import com.fty.onlinecar.service.IntegralDetailService;
 import com.fty.onlinecar.service.LoginInfoService;
 import com.fty.onlinecar.service.UsersService;
 import com.fty.onlinecar.utils.WechatUtil;
@@ -31,6 +32,8 @@ public class LoginController {
 
     @Resource
     private LoginInfoService loginInfoService;
+    @Resource
+    private IntegralDetailService integralDetailService;
 
 
     @PostMapping(value = "/getLoginInfo", name = "获取登录信息")
@@ -78,11 +81,23 @@ public class LoginController {
     @PostMapping(value = "/passengerLogin", name = "乘客登录")
     @ResponseBody
     public Result passengerLogin(@RequestBody LoginAndUsers data) {
+
+
         if(StringUtils.isEmpty(data.getUsers().getPhone())){
             return ResultGenerator.genResult(ResultEnum.PHONE_NULL);
         }
         Users account = usersService.findBy("phone",data.getUsers().getPhone());
         if(account==null){
+            System.out.println("新乘客注册开始：乘客邀请人："+data.getUsers().getInvitees()+"；");
+            if(data.getUsers().getInvitees()!=null && !data.getUsers().getInvitees().equals("")){
+                Users invitees = usersService.findById(data.getUsers().getInvitees());
+                System.out.println("邀请人类型："+invitees.getType()+";邀请人名称："+invitees.getName()+";邀请人积分："+invitees.getIntegral());
+                if(invitees!=null && invitees.getType()==1){
+                    System.out.println("邀请人增加积分");
+                    integralDetailService.addIntegral(invitees,1,"邀请乘客注册");
+                }
+            }
+
             account = usersService.addPassenger(data.getUsers());
         }
         if(!account.getType().equals(data.getUsers().getType())){

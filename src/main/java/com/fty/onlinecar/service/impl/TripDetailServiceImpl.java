@@ -116,8 +116,32 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                     integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
                     balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum().toString(),"乘客确认同行");
 
+
                     tripDetail1.setState("3");
                     this.update(tripDetail1);
+
+                    //判断乘客是不是第一次乘车
+                    Map<String, Object> params = new HashMap<>();
+                    params.put("userId",passenger.getId());
+                    params.put("state","3");
+                    params.put("curTripId",tripDetail1.getId());
+                    List<Map<String,Object>> history = this.findHistory(params);
+                    if(history.isEmpty()){
+
+                        //判断乘客有没有邀请人
+                        if(passenger.getInvitees() !=null && !passenger.getInvitees().equals("")){
+                            Users invitees = usersService.findById(passenger.getInvitees());
+                            //判断邀请人类型是乘客
+                            if(invitees.getType()==2){
+                                integralDetailService.addIntegral(invitees,1,"邀请乘客乘车");
+                                balanceDetailService.lessen(driver,"1","乘客邀请人乘客");
+                            }
+
+                        }
+
+                    }
+
+
                 }
 
 

@@ -25,7 +25,7 @@
         where 1=1
         and td.state != 3
         and td.p_id is null
-        and to_days(td.departure_time) >= to_days(now())
+        and td.departure_time >= now()
         <if test="params.times!=null and params.times!=''">
             and td.departure_time >= #{params.times}
         </if>
@@ -75,6 +75,12 @@
         <if test="params.driverId != null and params.driverId !=''">
             and td.driver_id = #{params.driverId}
             and (td.user_id is null or td.user_id = '')
+        </if>
+        <if test="params.state != null and params.state !=''">
+            and td.state = #{params.state}
+        </if>
+        <if test="params.curTripId != null and params.curTripId !=''">
+            and td.id != #{params.curTripId}
         </if>
         order by td.create_time desc
     </select>
