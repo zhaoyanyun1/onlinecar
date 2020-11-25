@@ -41,7 +41,7 @@ public class Users implements Serializable {
 
     private String phone;
 
-    private String integral;
+    private Integer integral;
 
     private String balance;
 
@@ -260,14 +260,14 @@ public class Users implements Serializable {
     /**
      * @return integral
      */
-    public String getIntegral() {
+    public Integer getIntegral() {
         return integral;
     }
 
     /**
      * @param integral
      */
-    public void setIntegral(String integral) {
+    public void setIntegral(Integer integral) {
         this.integral = integral;
     }
 

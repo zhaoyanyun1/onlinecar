@@ -47,7 +47,7 @@ public class IntegralDetailServiceImpl extends AbstractService<IntegralDetail> i
 
     @Override
     public void addIntegral(Users users, Integer num, String detail) {
-        String integral =String.valueOf(Integer.parseInt(users.getIntegral())+num);
+        int integral =users.getIntegral()+num;
         users.setIntegral(integral);
         usersService.update(users);
 
@@ -61,7 +61,7 @@ public class IntegralDetailServiceImpl extends AbstractService<IntegralDetail> i
 
     @Override
     public void lessIntegral(Users users, Integer num, String detail) {
-        String integral =String.valueOf(Integer.parseInt(users.getIntegral())-num);
+        int integral =users.getIntegral()-num;
         users.setIntegral(integral);
         usersService.update(users);
 

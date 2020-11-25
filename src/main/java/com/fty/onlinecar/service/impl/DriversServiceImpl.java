@@ -36,6 +36,7 @@ public class DriversServiceImpl extends AbstractService<Drivers> implements Driv
                 if (orderParams.get(key) != null && orderParams.get(key).equals("descending")) orderParams.put(key, "desc");
             }
         PageHelper.startPage(page, size);
+        params.put("state","1");
         List<Map<String, Object>> res = driversMapper.baseList(params, orderParams);
 //        PageInfo<Map<String, Object>> pageInfo = new PageInfo<>(res);
         return res;

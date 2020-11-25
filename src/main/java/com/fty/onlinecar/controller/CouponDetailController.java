@@ -46,7 +46,7 @@ public class CouponDetailController{
         }
         Coupon coupon = couponService.findById(couponDetail.getCouponId());
         Users users = usersService.findById(couponDetail.getUserId());
-        int userIntegral =Integer.parseInt(users.getIntegral());
+        int userIntegral =users.getIntegral();
         int couponMoney =Integer.parseInt(coupon.getMoney());
         if(userIntegral<couponMoney){
             return ResultGenerator.genInsufficientPointsResult();

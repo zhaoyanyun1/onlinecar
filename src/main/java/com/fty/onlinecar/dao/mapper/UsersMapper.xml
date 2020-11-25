@@ -19,7 +19,7 @@
     <result column="idcard_photo" jdbcType="VARCHAR" property="idcardPhoto" />
     <result column="vehicle_licence" jdbcType="VARCHAR" property="vehicleLicence" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
-    <result column="integral" jdbcType="VARCHAR" property="integral" />
+    <result column="integral" jdbcType="INTEGER" property="integral" />
     <result column="balance" jdbcType="VARCHAR" property="balance" />
     <result column="invitation_code" jdbcType="VARCHAR" property="invitationCode" />
     <result column="Invitees" jdbcType="VARCHAR" property="invitees" />

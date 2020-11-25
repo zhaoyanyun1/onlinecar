@@ -5,6 +5,7 @@ import com.fty.onlinecar.dao.UsersMapper;
 import com.fty.onlinecar.entity.Users;
 import com.fty.onlinecar.service.UsersService;
 import com.fty.onlinecar.utils.JSONUtils;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class UsersServiceImpl extends AbstractService<Users> implements UsersSer
     private UsersMapper usersMapper;
 
     @Override
-    public List<Map<String, Object>> list(String search, String order, Integer page, Integer size){
+    public Page<Map<String, Object>> list(String search, String order, Integer page, Integer size){
         Map<String, Object> params = JSONUtils.json2map(search);
         Map<String, Object> orderParams = JSONUtils.json2map(order);
         for (String key : orderParams.keySet()) {
@@ -32,7 +33,8 @@ public class UsersServiceImpl extends AbstractService<Users> implements UsersSer
             }
         PageHelper.startPage(page, size);
         List<Map<String, Object>> res = usersMapper.list(params, orderParams);
-        return res;
+        Page<Map<String, Object>> pageList = (Page<Map<String, Object>>) res;
+        return pageList;
     }
 
     @Override

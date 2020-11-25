@@ -59,7 +59,9 @@ public class DriversController{
     @PostMapping(value="/delete",name="Drivers删除")
     @ResponseBody
     public Result delete(@RequestParam Long id) {
-        driversService.deleteById(id);
+        Drivers drivers = driversService.findById(id);
+        drivers.setState("0");
+        driversService.update(drivers);
         return ResultGenerator.genSuccessResult();
     }
 

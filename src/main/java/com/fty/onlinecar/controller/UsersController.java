@@ -7,6 +7,7 @@ import com.fty.onlinecar.response.ResultGenerator;
 import com.fty.onlinecar.response.Table;
 import com.fty.onlinecar.service.IntegralDetailService;
 import com.fty.onlinecar.service.UsersService;
+import com.github.pagehelper.Page;
 import io.swagger.annotations.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -187,10 +188,10 @@ public class UsersController {
                       @RequestParam(defaultValue = "0") Integer page,
                       @RequestParam(defaultValue = "10") Integer size) {
 
-        List<Map<String, Object>> list = usersService.list(search, order, page, size);
+        Page<Map<String, Object>> list = usersService.list(search, order, page, size);
         Table table = new Table();
         table.setData(list);
-        table.setCount(list.size());
+        table.setCount((int)list.getTotal());
         return table;
     }
 
@@ -202,10 +203,10 @@ public class UsersController {
                            @RequestParam(defaultValue = "0") Integer page,
                            @RequestParam(defaultValue = "10") Integer size) {
 
-        List<Map<String, Object>> list = usersService.list(search, order, page, size);
+        Page<Map<String, Object>> list = usersService.list(search, order, page, size);
         Table table = new Table();
         table.setData(list);
-        table.setCount(list.size());
+        table.setCount((int) list.getTotal());
         return table;
     }
 

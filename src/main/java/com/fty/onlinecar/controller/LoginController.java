@@ -67,6 +67,9 @@ public class LoginController {
         if(account.getState().equals("2")){
             return ResultGenerator.genResult(ResultEnum.UNDER_EVIEW);
         }
+        if(account.getState().equals("0")){
+            return ResultGenerator.genResult(ResultEnum.PHONE_NULL);
+        }
 
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.setUserId(account.getId());
@@ -170,8 +173,8 @@ public class LoginController {
         String body = "{\n" +
                 "  \"touser\": \""+openId+"\",\n" +
                 "  \"template_id\": \""+templateId+"\",\n" +
-
-                "  \"miniprogram_state\":\"trial\",\n" +
+                "\"page\":\"/pages/main/main\",\n"+
+                "  \"miniprogram_state\":\"formal\",\n" +
                 "  \"lang\":\"zh_CN\",\n" +
                 "  \"data\": "+data+
                 "}\n";

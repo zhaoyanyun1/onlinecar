@@ -32,6 +32,7 @@
         <if test="params.tripsDirection!=null and params.tripsDirection !=''">
             and td.trips_direction = #{params.tripsDirection}
         </if>
+        and u.state != 0
         order by td.departure_time asc,u.integral desc
     </select>
 
