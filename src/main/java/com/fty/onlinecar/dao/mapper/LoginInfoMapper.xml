@@ -19,4 +19,11 @@
     order by create_time desc
     limit 1;
   </select>
+
+    <select id="findByUserId" resultMap="BaseResultMap">
+    SELECT * FROM online_car.login_info
+    where
+    user_id = #{userId}
+    order by create_time desc
+  </select>
 </mapper>

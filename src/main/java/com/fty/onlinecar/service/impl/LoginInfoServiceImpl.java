@@ -44,4 +44,9 @@ public class LoginInfoServiceImpl extends AbstractService<LoginInfo> implements 
     public LoginInfo getOneByUserId(String userId) {
         return loginInfoMapper.getOneByUserId(userId);
     }
+
+    @Override
+    public List<LoginInfo> findByUserId(String userId) {
+        return loginInfoMapper.findByUserId(userId);
+    }
 }

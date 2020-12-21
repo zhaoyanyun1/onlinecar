@@ -1,0 +1,6 @@
+-- delete from users where id>0;
+-- delete from login_info where id>0;
+-- delete from trip_detail where id>0;
+-- delete from coupon_detail where id>0;
+-- delete from Integral_detail where id>0;
+-- delete from balance_detail where id>0;

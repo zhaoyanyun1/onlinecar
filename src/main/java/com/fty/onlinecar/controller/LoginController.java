@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Api(value = "Login", tags = {"Login"})
 @Controller
@@ -71,6 +72,18 @@ public class LoginController {
             return ResultGenerator.genResult(ResultEnum.PHONE_NULL);
         }
 
+        List<LoginInfo> loginInfoList = loginInfoService.findByUserId(String.valueOf(account.getId()));
+        if(!loginInfoList.isEmpty()){
+            String ids = "";
+            for (LoginInfo login: loginInfoList) {
+                ids = ids+login.getId()+",";
+
+            }
+            ids = ids.substring(0,ids.length()-1);
+            loginInfoService.deleteByIds(ids);
+        }
+
+
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.setUserId(account.getId());
         loginInfo.setAccessToken(data.getLoginInfo().getAccessToken());
@@ -91,8 +104,9 @@ public class LoginController {
         }
         Users account = usersService.findBy("phone",data.getUsers().getPhone());
         if(account==null){
-            System.out.println("新乘客注册开始：乘客邀请人："+data.getUsers().getInvitees()+"；");
-            if(data.getUsers().getInvitees()!=null && !data.getUsers().getInvitees().equals("")){
+            System.out.println("新乘客注册:"+data.getUsers().getPhone());
+            if(StringUtils.isNotEmpty(data.getUsers().getInvitees())){
+                System.out.println("乘客邀请人："+data.getUsers().getInvitees()+"；");
                 Users invitees = usersService.findById(data.getUsers().getInvitees());
                 System.out.println("邀请人类型："+invitees.getType()+";邀请人名称："+invitees.getName()+";邀请人积分："+invitees.getIntegral());
                 if(invitees!=null && invitees.getType()==1){
@@ -105,6 +119,17 @@ public class LoginController {
         }
         if(!account.getType().equals(data.getUsers().getType())){
             return ResultGenerator.genResult(ResultEnum.PHONE_NO);
+        }
+
+        List<LoginInfo> loginInfoList = loginInfoService.findByUserId(String.valueOf(account.getId()));
+        if(!loginInfoList.isEmpty()){
+            String ids = "";
+            for (LoginInfo login: loginInfoList) {
+                ids = ids+login.getId()+",";
+
+            }
+            ids = ids.substring(0,ids.length()-1);
+            loginInfoService.deleteByIds(ids);
         }
 
         LoginInfo loginInfo = new LoginInfo();
@@ -179,6 +204,9 @@ public class LoginController {
                 "  \"data\": "+data+
                 "}\n";
 
+        System.out.println("发送消息推送：");
+        System.out.println("access_token："+access_token);
+        System.out.println("body："+body);
         String res= HttpUtil.post(url+access_token,body);
         System.out.println(res);
         return ResultGenerator.genSuccessResult(res);
