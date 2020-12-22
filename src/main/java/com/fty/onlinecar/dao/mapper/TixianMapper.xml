@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fty.onlinecar.dao.TixianMapper">
+  <resultMap id="BaseResultMap" type="com.fty.onlinecar.entity.Tixian">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="integral" jdbcType="INTEGER" property="integral" />
+    <result column="zhifubao" jdbcType="VARCHAR" property="zhifubao" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+
+  <select id="list" resultType="com.fty.onlinecar.base.ResultMap">
+    select t.*,u.phone from
+    tixian t
+    left join users u
+    on u.id = t.user_id
+    where 1=1
+    <if test="params.userId!=null and params.userId!=''">
+      and t.user_id = #{params.userId}
+    </if>
+    <if test="params.state!=null and params.state!=''">
+      and t.state = #{params.state}
+    </if>
+
+    <if test="order.keySet().size()&gt;0">
+      order by
+      <foreach collection="order.entrySet()" index="key" item="value" separator=",">
+        ${key} ${value}
+      </foreach>
+    </if>
+    <if test="order.keySet().size()==0">
+      order by t.create_time desc
+    </if>
+
+  </select>
+</mapper>
