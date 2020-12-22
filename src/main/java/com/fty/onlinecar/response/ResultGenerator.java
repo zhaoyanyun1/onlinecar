@@ -36,6 +36,11 @@ public class ResultGenerator {
     public static Result genNoTripResult() {
         return new Result(ResultEnum.NO_TRIP);
     }
+
+    public static Result genFailUpdateTripResult() {
+        return new Result(ResultEnum.FAIL_UPDATETRIP);
+    }
+
     public static Result genRegisterFailResult() {
         return new Result(ResultEnum.REGISTER_FAIL);
     }

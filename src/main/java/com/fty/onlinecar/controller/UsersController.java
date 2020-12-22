@@ -140,9 +140,30 @@ public class UsersController {
     @ApiOperation(value = "审核通过", tags = {"Users"}, notes = "Users修改,对象主键必填")
     @PostMapping(value = "/pass", name = "审核通过")
     @ResponseBody
-    public Result pass(@RequestParam("id") Integer id) {
+    public Result pass(@RequestParam("id") Integer id,@RequestParam("type") String type) {
         Users users1 = usersService.findById(id);
+        users1.setDriverType(type);
         users1.setState("1");
+        usersService.update(users1);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @ApiOperation(value = "保存", tags = {"Users"}, notes = "Users修改,对象主键必填")
+    @PostMapping(value = "/save", name = "审核通过")
+    @ResponseBody
+    public Result save(@RequestParam("id") Integer id,@RequestParam("type") String type) {
+        Users users1 = usersService.findById(id);
+        users1.setDriverType(type);
+        usersService.update(users1);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @ApiOperation(value = "修改积分基数", tags = {"Users"}, notes = "Users修改,对象主键必填")
+    @PostMapping(value = "/updateIntegralNum", name = "修改积分基数")
+    @ResponseBody
+    public Result updateIntegralNum(@RequestParam("id") Integer id,@RequestParam("integralNum") int integralNum) {
+        Users users1 = usersService.findById(id);
+        users1.setIntegralNum(integralNum);
         usersService.update(users1);
         return ResultGenerator.genSuccessResult();
     }

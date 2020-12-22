@@ -19,7 +19,7 @@
     </resultMap>
 
     <select id="driverTriplist" resultType="com.fty.onlinecar.base.ResultMap">
-        select td.*,u.name,u.phone from trip_detail td
+        select td.*,u.name,u.phone,u.driver_type driverType from trip_detail td
         left join users u
         on u.id = td.driver_id
         where 1=1

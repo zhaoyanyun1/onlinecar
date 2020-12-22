@@ -46,8 +46,8 @@ public class BalanceDetailServiceImpl extends AbstractService<BalanceDetail> imp
     }
 
     @Override
-    public void lessen(Users users, String money, String detail) {
-        String balance =String.valueOf(Integer.parseInt(users.getBalance()) - Integer.parseInt(money));
+    public void lessen(Users users, int money, String detail) {
+        String balance =String.valueOf(Integer.parseInt(users.getBalance()) - money);
         users.setBalance(balance);
         usersService.update(users);
         BalanceDetail balanceDetail = new BalanceDetail();

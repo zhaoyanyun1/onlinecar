@@ -36,6 +36,7 @@ public enum ResultEnum implements IResultEnum {
     PHONE_HAVE("手机号已经存在",500),
     PHONE_NO("手机号没有注册",500),
     NO_TRIP("当前没有行程",222),
+    FAIL_UPDATETRIP("修改座位数失败，不能低于当前乘坐人数",222),
     INSUFFICIENT_POINTS("积分不足",400120),
     NO_DURTRIP("没有对应行程或对应行程已经取消",400121),
     TRIP_FULL("行程已经满座",400122),

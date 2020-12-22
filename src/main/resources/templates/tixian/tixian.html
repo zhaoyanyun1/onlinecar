@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>title</title>
+    <div th:include="fragment/head :: head"></div>
+</head>
+<body>
+
+<table id="tixian" lay-filter="tixian"></table>
+<script type="text/html" id="operation">
+    {{#  if(d.state === '1'){ }}
+    <a class="layui-btn  layui-btn-xs" lay-event="success">转账成功</a>
+    <a class="layui-btn  layui-btn-xs" lay-event="fail">转账失败</a>
+    {{#  } }}
+</script>
+<div id="form" style="display: none">
+
+</div>
+<script type="text/html" id="status">
+    {{#  if(d.state === '1'){ }}
+    待审核
+    {{#  } }}
+    {{#  if(d.state === '2'){ }}
+    提现成功
+    {{#  } }}
+    {{#  if(d.state === '3'){ }}
+    提现失败，积分已退回
+    {{#  } }}
+</script>
+<script th:src="@{/static/layui/layui.js}"></script>
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    layui.use(['table', 'form'], function () {
+        var table = layui.table
+            , $ = layui.$
+            , form = layui.form;
+        //员工
+        var userinfos = table.render({
+            elem: '#tixian'
+            , id: 'tixian'
+            , url: 'list' //数据接口
+            , method: 'post'
+            , page: true //开启分页
+            , size: 'sm'
+            , cols: [[ //表头
+                {field: 'phone', title: '用户电话', width: '20%', sort: true},
+                {field: 'integral', title: '提现积分', width: '20%', sort: true},
+                {field: 'zhifubao', title: '支付宝账号', width: '20%', sort: true},
+                {field: 'state', title: '状态', width: '20%', sort: true, templet: '#status'}
+                , {field: 'operation', title: '操作', width: '20%', sort: true, toolbar: '#operation'}
+            ]]
+        });
+        $("#add").click(function () {
+            layer.open({
+                type: 2
+                , title: '添加行程信息'
+                , area: ['500px', '300px']
+                , content: ["toAdd", "yes"] // 第二个参数代表滚动条
+                , cancel: function () {
+                    userinfos.reload();
+                }
+
+            })
+        });
+        table.on('tool(tixian)', function (obj) {
+            var layEvent = obj.event;
+            var data = obj.data;
+            console.log(data);
+            if (layEvent === 'success') {
+                $.ajax({
+                    url: 'success',
+                    type: "post",
+                    dataType: "json",
+                    data: {id: data.id},
+                    success: function (data) {
+                        layer.message(data.message);
+                        window.location.reload();
+                    }
+                });
+            }
+            if (layEvent === 'fail') {
+                $.ajax({
+                    url: 'fail',
+                    type: "post",
+                    dataType: "json",
+                    data: {id: data.id},
+                    success: function (data) {
+                        layer.message(data.message);
+                        window.location.reload();
+                    }
+                });
+            }
+
+        })
+
+    });
+
+
+    /*]]>*/
+</script>
+</body>
+
+<div id="detail" style="display: none">
+    司机名称:  <span name="name"></span><br/>
+    司机性别:  <span name="sex"></span><br/>
+    司机年龄:  <span name="age"></span><br/>
+    司机车牌号:  <span name="carNum"></span><br/>
+    司机驾龄:  <span name="name"></span><br/>
+    司机身份证号:  <span name="idcard"></span><br/>
+</div>
+</html>

@@ -10,5 +10,5 @@ import com.fty.onlinecar.response.Result;
 public interface BalanceDetailService extends Service<BalanceDetail> {
    Result list(String search, String order, Integer page, Integer size);
 
-   void lessen(Users users,String money,String detail);
+   void lessen(Users users,int money,String detail);
 }

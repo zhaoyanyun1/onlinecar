@@ -114,7 +114,7 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                     Users driver = usersService.findById(tripDetail1.getDriverId());
                     Users passenger = usersService.findById(tripDetail1.getUserId());
                     integralDetailService.addIntegral(passenger,tripDetail1.getAllSeatNum(),"乘车");
-                    balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum().toString(),"乘客确认同行");
+                    balanceDetailService.lessen(driver,tripDetail1.getAllSeatNum(),"乘客确认同行");
 
 
                     tripDetail1.setState("3");
@@ -133,8 +133,12 @@ public class TripDetailServiceImpl extends AbstractService<TripDetail> implement
                             Users invitees = usersService.findById(passenger.getInvitees());
                             //判断邀请人类型是乘客
                             if(invitees.getType()==2){
-                                integralDetailService.addIntegral(invitees,1,"邀请乘客乘车");
-                                balanceDetailService.lessen(driver,"1","乘客邀请人乘客");
+                                int num = 1;
+                                if(invitees.getIntegralNum()!=null){
+                                    num = invitees.getIntegralNum();
+                                }
+                                integralDetailService.addIntegral(invitees,num,"邀请乘客乘车");
+                                balanceDetailService.lessen(driver,num,"乘客邀请人乘客");
                             }
 
                         }

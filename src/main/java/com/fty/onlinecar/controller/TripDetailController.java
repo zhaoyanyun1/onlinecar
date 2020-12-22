@@ -18,11 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 /**
@@ -156,6 +152,33 @@ public class TripDetailController{
     }
 
 
+    @ApiOperation(value = "TripDetail修改", tags = {"TripDetail"}, notes = "TripDetail修改,对象主键必填")
+    @PostMapping(value="/updateTrip",name="TripDetail修改")
+    @ResponseBody
+    public Result updateTrip(@RequestBody TripDetail tripDetail) {
+
+        TripDetail oldTrip = tripDetailService.findById(tripDetail.getId());
+        List<Map<String, Object>> list = new ArrayList<>();
+        if(tripDetail.getAllSeatNum() < oldTrip.getAllSeatNum()){
+            List<Map<String, Object>> peers = tripDetailService.findPeersPassenger(tripDetail.getId());
+            for(Map<String, Object> map :peers){
+                String num =(String) map.get("state");
+                if(num.equals("1")){
+                    list.add(map);
+                }
+            }
+
+            if(tripDetail.getAllSeatNum()<list.size()){
+                return ResultGenerator.genFailUpdateTripResult();
+            }
+        }
+
+        int a = tripDetail.getAllSeatNum() - oldTrip.getAllSeatNum();
+        tripDetail.setSurplusSeatNum(oldTrip.getSurplusSeatNum()+a);
+        tripDetailService.update(tripDetail);
+
+        return ResultGenerator.genSuccessResult();
+    }
 
 
 

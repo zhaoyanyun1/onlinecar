@@ -59,6 +59,12 @@ public class Users implements Serializable {
     @Column(name = "update_time")
     private Date updateTime;
 
+    @Column(name = "driver_type")
+    private String driverType;
+
+    @Column(name = "integral_num")
+    private Integer integralNum;
+
     private static final long serialVersionUID = 1L;
 
     /**
@@ -353,5 +359,21 @@ public class Users implements Serializable {
      */
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getDriverType() {
+        return driverType;
+    }
+
+    public void setDriverType(String driverType) {
+        this.driverType = driverType;
+    }
+
+    public Integer getIntegralNum() {
+        return integralNum;
+    }
+
+    public void setIntegralNum(Integer integralNum) {
+        this.integralNum = integralNum;
     }
 }

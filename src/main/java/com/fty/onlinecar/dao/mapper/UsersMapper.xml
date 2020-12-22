@@ -26,6 +26,8 @@
     <result column="state" jdbcType="VARCHAR" property="state" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="driver_type" jdbcType="VARCHAR" property="driverType" />
+    <result column="integral_num" jdbcType="INTEGER" property="integralNum" />
   </resultMap>
 
   <select id="list" resultType="com.fty.onlinecar.base.ResultMap">
@@ -33,6 +35,9 @@
     where 1=1
     <if test="params.type!=null and params.type!=''">
       and u.type = #{params.type}
+    </if>
+    <if test="params.searchPhone!=null and params.searchPhone!=''">
+      and u.phone = #{params.searchPhone}
     </if>
 
     <if test="order.keySet().size()&gt;0">

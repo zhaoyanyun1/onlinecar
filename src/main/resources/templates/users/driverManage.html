@@ -167,6 +167,7 @@
             $("span[name='idcard']").text(driver.idcard ? driver.idcard : '无数据');
             $("span[name='carNum']").text(driver.carNum ? driver.carNum : '无数据');
             $("input[name='id']").val(driver.id);
+            $("#detail_driverType").val(driver.driverType);
 
         }
 
@@ -182,11 +183,28 @@
 
         $("#pass").click(function (e) {
             var id = $("input[name='id']").val();
+            var type = $("#driverType").val();
+            debugger;
             $.ajax({
                 url: "pass",
                 type: "post",
                 contentType: 'application/x-www-form-urlencoded',
-                data: {"id":id},
+                data: {"id":id,"type":type},
+                success: function (data) {
+                    layer.close(layer.index);
+                    layer.msg(data.message);
+                }
+            });
+        })
+        $("#save").click(function (e) {
+            var id = $("input[name='id']").val();
+            var type = $("#detail_driverType").val();
+            debugger;
+            $.ajax({
+                url: "save",
+                type: "post",
+                contentType: 'application/x-www-form-urlencoded',
+                data: {"id":id,"type":type},
                 success: function (data) {
                     layer.close(layer.index);
                     layer.msg(data.message);
@@ -222,6 +240,17 @@
     司机车牌号: <span name="carNum"></span><br/>
     司机驾龄: <span name="name"></span><br/>
     司机身份证号: <span name="idcard"></span><br/>
+    <input name="id" value="" type="hidden"/>
+    司机类型:
+    <select id="detail_driverType">
+        <option value="1">一类</option>
+        <option value="2">二类</option>
+    </select><br/>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" id="save">保存</button>
+        </div>
+    </div>
 </div>
 
 <div id="examine" style="display: none">
@@ -233,6 +262,11 @@
     司机车牌号: <span name="carNum"></span><br/>
     司机驾龄: <span name="name"></span><br/>
     司机身份证号: <span name="idcard"></span><br/>
+    司机类型:
+    <select id="driverType">
+        <option value="1">一类</option>
+        <option value="2">二类</option>
+    </select><br/>
     <input name="id" value="" type="hidden"/>
     <div class="layui-form-item">
         <div class="layui-input-block">
